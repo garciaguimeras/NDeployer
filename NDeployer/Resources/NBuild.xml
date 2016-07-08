@@ -1,0 +1,15 @@
+﻿<xml>
+  
+  <property name="prop1">value1 ${prop2}</property>
+  <property name="prop2">value2 ${propA}</property>
+  <property name="prop3">${prop1} value3 ${prop2}</property>
+  
+  <property name="DIR.NAME">Prueba</property>
+
+  <deploy todir="C:\Users\Noel\Desktop\${DIR.NAME}">
+
+    <file name="C:\Users\Noel\Desktop\Backup"/>
+    
+  </deploy>
+
+</xml>
