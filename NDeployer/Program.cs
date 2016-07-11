@@ -8,7 +8,7 @@ namespace NDeployer
     class Program
     {
 
-        private const string BUILD_FILENAME = @"C:\Users\Noel\Documents\Visual Studio 2013\Projects\NDeployer\NDeployer\Resources\NBuild.xml";
+        private const string BUILD_FILENAME = @"/home/noel/Documents/NDeployer/NDeployer/Resources/NBuild.xml";
 
         static void Main(string[] args)
         {

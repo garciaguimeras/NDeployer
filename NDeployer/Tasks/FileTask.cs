@@ -8,23 +8,15 @@ using System.IO;
 namespace NDeployer.Tasks
 {
 
-    class FileTaskData
-    {
-        public string FileName { get; set; }
-        public string RelativePath { get; set; }
-    }
-
     class FileTask : Task
     {
 
         string filename;
-        List<FileTaskData> data;
 
-        public FileTask()
+        public FileTask(Environment environment) : base(environment)
         {
             Name = "file";
             filename = null;
-            data = new List<FileTaskData>();
         }
 
         public override bool ProcessXml(XElement rootNode)
@@ -35,11 +27,20 @@ namespace NDeployer.Tasks
             return true;
         }
 
+		public void AddToOutputPipe(string filename, string relativePath)
+		{
+			Dictionary<string, string> data = new Dictionary<string, string>();
+			data.Add("filename", filename);
+			data.Add("relativePath", relativePath);
+			environment.Pipe.AddToOuputPipe(data);
+		}
+
         private void ReadDirectory(string path, string relativePath)
         {
             string[] files = Directory.GetFiles(path);
             foreach (string f in files)
-                data.Add(new FileTaskData { FileName = f, RelativePath = relativePath });
+                // Add filename + relativePath
+				AddToOutputPipe(f, relativePath);
 
             string[] dirs = Directory.GetDirectories(path);
             foreach (string dir in dirs)
@@ -52,9 +53,17 @@ namespace NDeployer.Tasks
 
         public override void Execute()
         {
+			filename = PropertyEvaluator.EvalValue(filename);
+			if (filename == null)
+			{
+				environment.Pipe.AddToErrorPipe("Error evaluating attributes. Execution suspended.");
+				return;
+			}
+
             if (File.Exists(filename))
             {
-                data.Add(new FileTaskData { FileName = filename, RelativePath = "." });
+                // Add filename + relativePath
+				AddToOutputPipe(filename, ".");
                 return;
             }
 
@@ -64,12 +73,8 @@ namespace NDeployer.Tasks
                 return;
             }
 
-            Logger.error("File or directory does not exist: {0}", filename);
+            environment.Pipe.AddToErrorPipe("File or directory does not exist: {0}", filename);
         }
 
-        public override object GetData()
-        {
-            return data;
-        }
     }
 }

@@ -31,18 +31,15 @@ namespace NDeployer
         {
             foreach (XElement element in root.Elements("property"))
             {
-                string name = element.Attribute("name").Value;
-                string value = element.Value;
-                environment.AddProperty(name, value);
+                TaskFactory.CreateTaskForTag("property").ProcessXml(element);
             }
         }
 
-        public void Execute()
+        private void ValidateDocument(XElement root)
         {
-            XElement root = GetDocumentRoot();
             if (root == null)
             {
-                Logger.error("Invalid build file. Can't find document root");
+                environment.Pipe.AddToErrorPipe("Invalid build file. Can't find document root");
                 return;
             }
 
@@ -50,19 +47,36 @@ namespace NDeployer
             bool result = PropertyEvaluator.EvalAllProperties();
             if (!result)
             {
-                Logger.error("Error evaluating properties. Execution suspended.");
+                environment.Pipe.AddToErrorPipe("Error evaluating properties. Execution suspended.");
+                return;
+            }
+        }
+
+        public void Execute()
+        {
+            XElement root = GetDocumentRoot();
+            ValidateDocument(root);
+            if (environment.Pipe.Error.Count() > 0)
+            {
+                environment.Pipe.PrintErrorPipe();
                 return;
             }
 
             IEnumerable<XElement> elements = root.Elements().Where(e => !e.Name.ToString().Equals("property"));
             foreach (XElement child in elements)
             {
-                string name = child.Name.ToString();
-                Task t = environment.GetTask(name);
+                if (environment.Pipe.Error.Count() > 0)
+                {
+                    environment.Pipe.PrintErrorPipe();
+                    return;
+                }
+                environment.Pipe.SwitchPipes();
 
+                string name = child.Name.ToString();
+                Task t = TaskFactory.CreateTaskForTag(name);
                 if (t == null)
                 {
-                    Logger.error("Could not find any task for tag: {0}", name);
+                    environment.Pipe.AddToErrorPipe("Could not find any task for tag: {0}", name);
                     continue;
                 }
 

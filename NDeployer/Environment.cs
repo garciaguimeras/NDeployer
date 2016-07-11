@@ -19,11 +19,11 @@ namespace NDeployer
 
         private static Environment instance = null;
 
-        Dictionary<string, Task> tasks;
         Dictionary<string, PropertyItem> properties;
+        Pipe pipe;
 
-        public Dictionary<string, Task> Tasks { get { return tasks; } }
         public Dictionary<string, PropertyItem> Properties { get { return properties;  } }
+        public Pipe Pipe { get { return pipe; } }
 
         public static Environment GetEnvironment()
         {
@@ -34,32 +34,8 @@ namespace NDeployer
 
         private Environment()
         {
-            tasks = new Dictionary<string, Task>();
             properties = new Dictionary<string, PropertyItem>();
-
-            InitTasks();
-        }
-
-        private void InitTasks()
-        {
-            AddTask(new DeployTask());
-            AddTask(new FileTask());
-        }
-
-        public void AddTask(Task task)
-        {
-            tasks.Add(task.Name, task);
-        }
-
-        public Task GetTask(string name)
-        {
-            try
-            {
-                return tasks[name];
-            }
-            catch (KeyNotFoundException e)
-            { }
-            return null;
+            pipe = new Pipe();
         }
 
         public void AddProperty(string name, string value)

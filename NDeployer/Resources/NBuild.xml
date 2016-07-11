@@ -1,15 +1,14 @@
 ﻿<xml>
   
-  <property name="prop1">value1 ${prop2}</property>
-  <property name="prop2">value2 ${propA}</property>
-  <property name="prop3">${prop1} value3 ${prop2}</property>
-  
-  <property name="DIR.NAME">Prueba</property>
+	<property name="DOCUMENTS.DIR">/home/noel/Documents</property>
+	<property name="SRC.DIR">${DOCUMENTS.DIR}/TestPrj</property>
+	<property name="DEPLOY.DIR.1">${DOCUMENTS.DIR}/TestDest</property>
+	<property name="DEPLOY.DIR.2">${DOCUMENTS.DIR}/TestDestFlatten</property>
 
-  <deploy todir="C:\Users\Noel\Desktop\${DIR.NAME}">
+	<file name="${SRC.DIR}" />
+	<deploy todir="${DEPLOY.DIR.1}" />
 
-    <file name="C:\Users\Noel\Desktop\Backup"/>
-    
-  </deploy>
+	<flatten />
+	<deploy todir="${DEPLOY.DIR.2}" />
 
 </xml>

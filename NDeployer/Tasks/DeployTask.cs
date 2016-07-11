@@ -12,13 +12,11 @@ namespace NDeployer.Tasks
     {
 
         string deployDir;
-        List<FileTask> fileTasks;
 
-        public DeployTask()
+        public DeployTask(Environment environment) : base(environment)
         {
             Name = "deploy";
             deployDir = null;
-            fileTasks = new List<FileTask>();
         }
 
         public override bool ProcessXml(XElement rootNode)
@@ -26,14 +24,6 @@ namespace NDeployer.Tasks
             deployDir = GetAttribute(rootNode, "todir");
             if (deployDir == null)
                 return false;
-
-            foreach (XElement child in rootNode.Elements("file"))
-            {
-                FileTask fileTask = new FileTask();
-                fileTask.ProcessXml(child);
-                fileTasks.Add(fileTask);
-            }
-
             return true;
         }
 
@@ -42,7 +32,7 @@ namespace NDeployer.Tasks
             deployDir = PropertyEvaluator.EvalValue(deployDir);
             if (deployDir == null)
             {
-                Logger.error("Error evaluating attributes. Execution suspended.");
+                environment.Pipe.AddToErrorPipe("Error evaluating attributes. Execution suspended.");
                 return;
             }
             
@@ -53,28 +43,31 @@ namespace NDeployer.Tasks
                 Directory.CreateDirectory(deployDir);
             }
 
-            foreach (FileTask fileTask in fileTasks)
+            environment.Pipe.KeepPipe();
+			IEnumerable<Dictionary<string, string>> input = environment.Pipe.Input;
+			foreach (Dictionary<string, string> data in input)
             {
-                fileTask.Execute();
-                List<FileTaskData> data = (List<FileTaskData>)fileTask.GetData();
-                foreach (FileTaskData fData in data)
-                {
-                    Logger.info(2, "Deploying file {0}", fData.FileName);
+				if (!data.ContainsKey("filename") || !File.Exists(data["filename"])) 
+				{
+					string name = data.ContainsKey("filename") ? data["filename"] : "";
+					environment.Pipe.AddToErrorPipe("Filename does not exist: {0}", name);
+					return;
+				}
 
-                    string fName = Path.GetFileName(fData.FileName);
-                    string destDir = Path.Combine(deployDir, fData.RelativePath);
-                    string destFile = Path.Combine(destDir, fName);
+				string filename = data["filename"];
+				string destDir = data.ContainsKey("relativePath") ? data["relativePath"] : ".";
 
-                    if (!Directory.Exists(destDir))
-                        Directory.CreateDirectory(destDir);
-                    File.Copy(fData.FileName, destFile, true);
-                }
+                Logger.info(2, "Deploying file {0}", filename);
+
+				string fName = Path.GetFileName(filename);
+                destDir = Path.Combine(deployDir, destDir);
+                string destFile = Path.Combine(destDir, fName);
+
+                if (!Directory.Exists(destDir))
+                    Directory.CreateDirectory(destDir);
+                File.Copy(filename, destFile, true);
             }
-        }
 
-        public override object GetData()
-        {
-            return null;
         }
 
     }

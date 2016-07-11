@@ -104,14 +104,14 @@ namespace NDeployer
                     PropertyItem item = EvalProperty(key, new Stack<string>());
                     if (item == null)
                     {
-                        Logger.error("Property {0} not found", item.Name);
+                        environment.Pipe.AddToErrorPipe("Property {0} not found", item.Name);
                         return false;
                     }
                     Logger.info("Property {0} = {1}", item.Name, item.EvalValue);
                 }
                 catch (PropertyEvaluatorException e)
                 {
-                    Logger.error(e.Message);
+                    environment.Pipe.AddToErrorPipe(e.Message);
                     return false;
                 }
             }
@@ -130,7 +130,7 @@ namespace NDeployer
             }
             catch (PropertyEvaluatorException e)
             {
-                Logger.error(e.Message);
+                environment.Pipe.AddToErrorPipe(e.Message);
             }
             return null;
         }
