@@ -63,13 +63,15 @@
     <Compile Include="Pipe.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyEvaluator.cs" />
     <Compile Include="Tasks\DeployTask.cs" />
     <Compile Include="Tasks\FileTask.cs" />
     <Compile Include="Tasks\PropertyTask.cs" />
     <Compile Include="Tasks\Task.cs" />
     <Compile Include="Tasks\TaskFactory.cs" />
     <Compile Include="Tasks\FlattenTask.cs" />
+    <Compile Include="Tasks\FilterTask.cs" />
+    <Compile Include="Util\WildcardExpressionEvaluator.cs" />
+    <Compile Include="Util\PropertyEvaluator.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -96,4 +98,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="Util\" />
+  </ItemGroup>
 </Project>

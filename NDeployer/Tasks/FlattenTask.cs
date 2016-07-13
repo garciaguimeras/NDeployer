@@ -10,10 +10,8 @@ namespace NDeployer.Tasks
 	class FlattenTask : Task
 	{
 		
-		public FlattenTask(Environment environment) : base(environment)
-		{
-			Name = "flatten";
-		}
+		public FlattenTask(string name) : base(name)
+		{}
 
 		public override bool ProcessXml(XElement rootNode)
 		{
@@ -25,10 +23,7 @@ namespace NDeployer.Tasks
 			IEnumerable<Dictionary<string, string>> input = environment.Pipe.Input;
 			foreach (Dictionary<string, string> data in input) 
 			{
-				if (data.ContainsKey("relativePath")) 
-				{
-					data["relativePath"] = ".";
-				}
+				data.Add("flatten", "");
 				environment.Pipe.AddToOuputPipe(data);
 			}
 		}

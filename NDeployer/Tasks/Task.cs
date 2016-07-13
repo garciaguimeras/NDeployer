@@ -17,9 +17,10 @@ namespace NDeployer.Tasks
 
         public abstract void Execute();
 
-        public Task(Environment environment)
+        public Task(string name)
         {
-            this.environment = environment;
+			environment = Environment.GetEnvironment();
+			Name = name;
         }
 
         protected string GetAttribute(XElement rootNode, string attrName)

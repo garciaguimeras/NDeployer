@@ -5,6 +5,8 @@ using System.Text;
 using System.Xml.Linq;
 using System.IO;
 
+using NDeployer.Util;
+
 namespace NDeployer.Tasks
 {
 
@@ -13,9 +15,8 @@ namespace NDeployer.Tasks
 
         string filename;
 
-        public FileTask(Environment environment) : base(environment)
+		public FileTask(string name) : base(name)
         {
-            Name = "file";
             filename = null;
         }
 
@@ -53,6 +54,7 @@ namespace NDeployer.Tasks
 
         public override void Execute()
         {
+			// Evaluate filename property
 			filename = PropertyEvaluator.EvalValue(filename);
 			if (filename == null)
 			{
@@ -60,6 +62,13 @@ namespace NDeployer.Tasks
 				return;
 			}
 
+			// Keep older files 
+			foreach (Dictionary<string, string> data in environment.Pipe.Input) 
+			{
+				environment.Pipe.AddToOuputPipe(data);
+			}
+
+			// Add unique file...
             if (File.Exists(filename))
             {
                 // Add filename + relativePath
@@ -67,12 +76,14 @@ namespace NDeployer.Tasks
                 return;
             }
 
+			// ...or add a whole directory...
             if (Directory.Exists(filename))
             {
                 ReadDirectory(filename, ".");
                 return;
             }
 
+			// ...or add an error :(
             environment.Pipe.AddToErrorPipe("File or directory does not exist: {0}", filename);
         }
 

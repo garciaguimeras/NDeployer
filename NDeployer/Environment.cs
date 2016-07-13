@@ -49,7 +49,7 @@ namespace NDeployer
             {
                 return properties[name];
             }
-            catch (KeyNotFoundException e)
+            catch (KeyNotFoundException)
             { }
             return null;
         }

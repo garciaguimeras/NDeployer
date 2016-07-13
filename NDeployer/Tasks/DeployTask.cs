@@ -5,6 +5,8 @@ using System.Text;
 using System.IO;
 using System.Xml.Linq;
 
+using NDeployer.Util;
+
 namespace NDeployer.Tasks
 {
 
@@ -13,9 +15,8 @@ namespace NDeployer.Tasks
 
         string deployDir;
 
-        public DeployTask(Environment environment) : base(environment)
+		public DeployTask(string name) : base(name)
         {
-            Name = "deploy";
             deployDir = null;
         }
 
@@ -26,6 +27,22 @@ namespace NDeployer.Tasks
                 return false;
             return true;
         }
+
+		private List<Dictionary<string, string>> FilterInputPipe(IEnumerable<Dictionary<string, string>> input)
+		{
+			List<Dictionary<string, string>> notExcluded = new List<Dictionary<string, string>>();
+			List<Dictionary<string, string>> included = new List<Dictionary<string, string>>();
+			foreach (Dictionary<string, string> data in input)
+			{
+				if (data.ContainsKey("include") && data["include"].Equals(""))
+					included.Add(data);
+				if (!data.ContainsKey("exclude") || !data["exclude"].Equals(""))
+					notExcluded.Add(data);
+			}
+			if (included.Count() > 0)
+				return included;
+			return notExcluded;
+		}
 
         public override void Execute()
         {
@@ -43,19 +60,22 @@ namespace NDeployer.Tasks
                 Directory.CreateDirectory(deployDir);
             }
 
-            environment.Pipe.KeepPipe();
+			environment.Pipe.KeepPipe();
+
 			IEnumerable<Dictionary<string, string>> input = environment.Pipe.Input;
+			input = FilterInputPipe(input);
 			foreach (Dictionary<string, string> data in input)
             {
 				if (!data.ContainsKey("filename") || !File.Exists(data["filename"])) 
 				{
 					string name = data.ContainsKey("filename") ? data["filename"] : "";
 					environment.Pipe.AddToErrorPipe("Filename does not exist: {0}", name);
-					return;
+					continue;
 				}
 
 				string filename = data["filename"];
-				string destDir = data.ContainsKey("relativePath") ? data["relativePath"] : ".";
+				bool flatten = data.ContainsKey("flatten") && data["flatten"].Equals("");
+				string destDir = !flatten && data.ContainsKey("relativePath") ? data["relativePath"] : ".";
 
                 Logger.info(2, "Deploying file {0}", filename);
 
