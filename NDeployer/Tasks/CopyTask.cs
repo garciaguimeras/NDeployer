@@ -10,12 +10,12 @@ using NDeployer.Util;
 namespace NDeployer.Tasks
 {
 
-    class DeployTask : Task
+    class CopyTask : Task
     {
 
         string deployDir;
 
-		public DeployTask(string name) : base(name)
+		public CopyTask(string name) : base(name)
         {
             deployDir = null;
         }

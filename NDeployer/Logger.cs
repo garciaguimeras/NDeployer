@@ -13,7 +13,7 @@ namespace NDeployer
         ERROR
     }
 
-    class Logger
+    static class Logger
     {
 
         private static void log(LogType type, int level, string text, params object[] args)

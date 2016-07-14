@@ -18,14 +18,23 @@ namespace NDeployer.Tasks
                 case "file":
                     return new FileTask(tag);
 
-                case "deploy":
-                    return new DeployTask(tag);
+                case "copy":
+                    return new CopyTask(tag);
 
 				case "flatten":
 					return new FlattenTask(tag);
 
 				case "filter":
 					return new FilterTask(tag);
+
+				case "push-pipe":
+					return new PushPipeTask(tag);
+
+				case "pop-pipe":
+					return new PopPipeTask(tag);
+
+				case "clear-pipe":
+					return new ClearPipeTask(tag);
             }
 
             return null;

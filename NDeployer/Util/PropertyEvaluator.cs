@@ -12,7 +12,7 @@ namespace NDeployer.Util
         {}
     }
 
-    class PropertyEvaluator
+    static class PropertyEvaluator
     {
 
         private static List<string> GetPropertyReferences(string text)

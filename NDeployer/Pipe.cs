@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace NDeployer
 {
 
+	[Serializable]
     class Pipe
     {
 
@@ -23,6 +27,18 @@ namespace NDeployer
 			output = new List<Dictionary<string, string>>();
 			error = new List<Dictionary<string, string>>();
         }
+
+		public Pipe Clone()
+		{
+			IFormatter formatter = new BinaryFormatter();
+			Stream stream = new MemoryStream();
+			using (stream)
+			{
+				formatter.Serialize(stream, this);
+				stream.Seek(0, SeekOrigin.Begin);
+				return (Pipe)formatter.Deserialize(stream);
+			}
+		}
 
         public void SwitchPipes()
         {

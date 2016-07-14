@@ -2,7 +2,7 @@
 
 namespace NDeployer.Util
 {
-	class WildcardExpressionEvaluator
+	static class WildcardExpressionEvaluator
 	{
 
 		public static bool EvalExpression(string pattern, string text)

@@ -20,6 +20,7 @@ namespace NDeployer
         private static Environment instance = null;
 
         Dictionary<string, PropertyItem> properties;
+		Stack<Pipe> pipeStack;
         Pipe pipe;
 
         public Dictionary<string, PropertyItem> Properties { get { return properties;  } }
@@ -35,6 +36,7 @@ namespace NDeployer
         private Environment()
         {
             properties = new Dictionary<string, PropertyItem>();
+			pipeStack = new Stack<Pipe>();
             pipe = new Pipe();
         }
 
@@ -53,5 +55,21 @@ namespace NDeployer
             { }
             return null;
         }
+
+		public void PushPipe()
+		{
+			pipeStack.Push(pipe.Clone());
+		}
+
+		public void PopPipe()
+		{
+			if (pipeStack.Count > 0)
+				pipe = pipeStack.Pop();
+		}
+
+		public void ClearPipe()
+		{
+			pipe = new Pipe();
+		}
     }
 }
