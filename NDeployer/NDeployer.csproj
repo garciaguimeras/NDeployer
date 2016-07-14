@@ -59,7 +59,6 @@
   <ItemGroup>
     <Compile Include="Environment.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="NBuildReader.cs" />
     <Compile Include="Pipe.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -75,6 +74,7 @@
     <Compile Include="Tasks\PopPipeTask.cs" />
     <Compile Include="Tasks\ClearPipeTask.cs" />
     <Compile Include="Tasks\CopyTask.cs" />
+    <Compile Include="Tasks\RootTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

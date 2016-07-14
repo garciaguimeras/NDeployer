@@ -67,6 +67,9 @@ namespace NDeployer
             IEnumerable<XElement> elements = root.Elements().Where(e => !e.Name.ToString().Equals("property"));
             foreach (XElement child in elements)
             {
+
+				Console.WriteLine(child.Name);
+
                 if (environment.Pipe.Error.Count() > 0)
                 {
                     environment.Pipe.PrintErrorPipe();

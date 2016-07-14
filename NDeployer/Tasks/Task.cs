@@ -39,5 +39,31 @@ namespace NDeployer.Tasks
             return attr.Value;
         }
 
+		protected void ExecuteContext(IEnumerable<XElement> elements)
+		{
+			foreach (XElement child in elements)
+			{
+				if (environment.Pipe.Error.Count() > 0)
+				{
+					environment.Pipe.PrintErrorPipe();
+					return;
+				}
+				environment.Pipe.SwitchPipes();
+
+				string name = child.Name.ToString();
+				Task t = TaskFactory.CreateTaskForTag(name);
+				if (t == null)
+				{
+					environment.Pipe.AddToErrorPipe("Could not find any task for tag: {0}", name);
+					continue;
+				}
+
+				if (t.ProcessXml(child))
+				{
+					t.Execute();
+				}
+			}
+		}
+
     }
 }

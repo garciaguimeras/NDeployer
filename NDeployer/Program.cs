@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using NDeployer.Tasks;
+
 namespace NDeployer
 {
     class Program
@@ -12,8 +14,8 @@ namespace NDeployer
 
         static void Main(string[] args)
         {
-            NBuildReader reader = new NBuildReader(BUILD_FILENAME);
-            reader.Execute();
+			RootTask rootTask = new RootTask(BUILD_FILENAME);
+			rootTask.Execute();
         }
     }
 }
