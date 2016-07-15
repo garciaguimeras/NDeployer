@@ -23,8 +23,11 @@ namespace NDeployer.Tasks
         public override bool ProcessXml(XElement rootNode)
         {
             deployDir = GetAttribute(rootNode, "todir");
-            if (deployDir == null)
-                return false;
+			if (deployDir == null)
+			{
+				AddAttributeNotFoundError("todir");
+				return false;
+			}
             return true;
         }
 
@@ -60,9 +63,7 @@ namespace NDeployer.Tasks
                 Directory.CreateDirectory(deployDir);
             }
 
-			environment.Pipe.KeepPipe();
-
-			IEnumerable<Dictionary<string, string>> input = environment.Pipe.Input;
+			IEnumerable<Dictionary<string, string>> input = environment.Pipe.Std;
 			input = FilterInputPipe(input);
 			foreach (Dictionary<string, string> data in input)
             {

@@ -26,7 +26,10 @@ namespace NDeployer.Tasks
 			include = GetAttribute(rootNode, "include");
 			exclude = GetAttribute(rootNode, "exclude");
 			if (include == null && exclude == null)
+			{
+				AddOneAttributeMandatoryError("include", "exclude");
 				return false;
+			}
 			return true;
 		}
 
@@ -52,14 +55,13 @@ namespace NDeployer.Tasks
 
 		public override void Execute()
 		{
-			IEnumerable<Dictionary<string, string>> input = environment.Pipe.Input;
+			IEnumerable<Dictionary<string, string>> input = environment.Pipe.Std;
 			foreach (Dictionary<string, string> data in input) 
 			{
 				if (include != null && NeedIncludeFlag(data))
 					data.Add("include", "");
 				if (exclude != null && NeedExcludeFlag(data))
 					data.Add("exclude", "");					
-				environment.Pipe.AddToOuputPipe(data);
 			}
 		}
 

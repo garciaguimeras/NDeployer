@@ -10,7 +10,7 @@ using NDeployer.Util;
 
 namespace NDeployer.Tasks
 {
-	class RootTask : Task
+	class RootTask : GeneratorTask
 	{
 
 		string filename;
@@ -56,7 +56,7 @@ namespace NDeployer.Tasks
 			return true;
 		}
 
-		public override void Execute()
+		public override void ExecuteGenerator()
 		{
 			XElement root = GetDocumentRoot();
 			ProcessXml(root);

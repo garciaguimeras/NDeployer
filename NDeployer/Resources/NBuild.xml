@@ -1,18 +1,18 @@
 ﻿<xml>
   
 	<property name="DOCUMENTS.DIR">/home/noel/Documents</property>
-	<property name="SRC.DIR">${DOCUMENTS.DIR}/MonodevelopProjects/Test</property>
+	<property name="SRC.DIR">${DOCUMENTS.DIR}/ng-test</property>
 	<property name="DEPLOY.DIR.1">${DOCUMENTS.DIR}/TestDest</property>
 	<property name="DEPLOY.DIR.2">${DOCUMENTS.DIR}/TestDestFlatten</property>
 
-	<file name="${SRC.DIR}" />
+	<file name="${SRC.DIR}">
+	    <flatten />
+		<filter exclude="*.js" />
+		<copy todir="${DEPLOY.DIR.2}" />
+	</file>
 
-    <push-pipe />
-    <flatten />
-	<filter exclude="*.cs" />
-	<copy todir="${DEPLOY.DIR.2}" />
-	<pop-pipe />
-
-	<copy todir="${DEPLOY.DIR.1}" />
+	<file name="${SRC.DIR}">
+		<copy todir="${DEPLOY.DIR.1}" />
+	</file>
 
 </xml>

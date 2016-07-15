@@ -20,11 +20,10 @@ namespace NDeployer.Tasks
 
 		public override void Execute()
 		{
-			IEnumerable<Dictionary<string, string>> input = environment.Pipe.Input;
+			IEnumerable<Dictionary<string, string>> input = environment.Pipe.Std;
 			foreach (Dictionary<string, string> data in input) 
 			{
 				data.Add("flatten", "");
-				environment.Pipe.AddToOuputPipe(data);
 			}
 		}
 

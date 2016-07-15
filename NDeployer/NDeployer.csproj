@@ -75,6 +75,11 @@
     <Compile Include="Tasks\ClearPipeTask.cs" />
     <Compile Include="Tasks\CopyTask.cs" />
     <Compile Include="Tasks\RootTask.cs" />
+    <Compile Include="Script\TaskDef.cs" />
+    <Compile Include="Script\XmlFileParser.cs" />
+    <Compile Include="Script\ScriptFile.cs" />
+    <Compile Include="Script\XmlFile.cs" />
+    <Compile Include="Script\ScriptFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -103,5 +108,9 @@
   -->
   <ItemGroup>
     <Folder Include="Util\" />
+    <Folder Include="Script\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\NBuild.script" />
   </ItemGroup>
 </Project>

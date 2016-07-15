@@ -20,7 +20,6 @@ namespace NDeployer.Tasks
 		public override void Execute()
 		{
 			environment.PushPipe();
-			environment.Pipe.KeepPipe();
 		}
 
 	}

@@ -20,7 +20,7 @@ namespace NDeployer.Tasks
 
 		public override void Execute()
 		{
-			environment.ClearPipe();
+			environment.NewPipe();
 		}
 
 	}

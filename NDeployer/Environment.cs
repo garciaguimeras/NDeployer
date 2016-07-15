@@ -58,7 +58,8 @@ namespace NDeployer
 
 		public void PushPipe()
 		{
-			pipeStack.Push(pipe.Clone());
+			if (pipe != null)
+				pipeStack.Push(pipe.Clone());
 		}
 
 		public void PopPipe()
@@ -67,7 +68,7 @@ namespace NDeployer
 				pipe = pipeStack.Pop();
 		}
 
-		public void ClearPipe()
+		public void NewPipe()
 		{
 			pipe = new Pipe();
 		}

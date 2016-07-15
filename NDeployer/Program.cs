@@ -10,7 +10,7 @@ namespace NDeployer
     class Program
     {
 
-        private const string BUILD_FILENAME = @"/home/noel/Documents/NDeployer/NDeployer/Resources/NBuild.xml";
+        private const string BUILD_FILENAME = @"/home/noel/Projects/NDeployer/NDeployer/Resources/NBuild.xml";
 
         static void Main(string[] args)
         {

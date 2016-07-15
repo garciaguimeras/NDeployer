@@ -10,10 +10,11 @@ using NDeployer.Util;
 namespace NDeployer.Tasks
 {
 
-    class FileTask : Task
+    class FileTask : GeneratorTask
     {
 
         string filename;
+		XElement root;
 
 		public FileTask(string name) : base(name)
         {
@@ -22,18 +23,22 @@ namespace NDeployer.Tasks
 
         public override bool ProcessXml(XElement rootNode)
         {
+			root = rootNode;
             filename = GetAttribute(rootNode, "name");
-            if (filename == null)
-                return false;
+			if (filename == null)
+			{
+				AddAttributeNotFoundError("name");
+				return false;
+			}
             return true;
         }
 
-		public void AddToOutputPipe(string filename, string relativePath)
+		public void AddToStandardPipe(string filename, string relativePath)
 		{
 			Dictionary<string, string> data = new Dictionary<string, string>();
 			data.Add("filename", filename);
 			data.Add("relativePath", relativePath);
-			environment.Pipe.AddToOuputPipe(data);
+			environment.Pipe.AddToStandardPipe(data);
 		}
 
         private void ReadDirectory(string path, string relativePath)
@@ -41,7 +46,7 @@ namespace NDeployer.Tasks
             string[] files = Directory.GetFiles(path);
             foreach (string f in files)
                 // Add filename + relativePath
-				AddToOutputPipe(f, relativePath);
+				AddToStandardPipe(f, relativePath);
 
             string[] dirs = Directory.GetDirectories(path);
             foreach (string dir in dirs)
@@ -52,7 +57,7 @@ namespace NDeployer.Tasks
             }
         }
 
-        public override void Execute()
+        public override void ExecuteGenerator()
         {
 			// Evaluate filename property
 			filename = PropertyEvaluator.EvalValue(filename);
@@ -62,29 +67,23 @@ namespace NDeployer.Tasks
 				return;
 			}
 
-			// Keep older files 
-			foreach (Dictionary<string, string> data in environment.Pipe.Input) 
+			if (!File.Exists(filename) && !Directory.Exists(filename))
 			{
-				environment.Pipe.AddToOuputPipe(data);
+				// Add an error :(
+				environment.Pipe.AddToErrorPipe("File or directory does not exist: {0}", filename);
+				return;
 			}
 
 			// Add unique file...
             if (File.Exists(filename))
-            {
-                // Add filename + relativePath
-				AddToOutputPipe(filename, ".");
-                return;
-            }
-
-			// ...or add a whole directory...
+				AddToStandardPipe(filename, ".");
+    
+			// ...or add a whole directory
             if (Directory.Exists(filename))
-            {
                 ReadDirectory(filename, ".");
-                return;
-            }
 
-			// ...or add an error :(
-            environment.Pipe.AddToErrorPipe("File or directory does not exist: {0}", filename);
+			// Execute tasks in context
+			ExecuteContext(root.Elements());
         }
 
     }

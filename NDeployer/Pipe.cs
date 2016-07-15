@@ -13,18 +13,15 @@ namespace NDeployer
     class Pipe
     {
 
-		List<Dictionary<string, string>> input;
-		List<Dictionary<string, string>> output;
+		List<Dictionary<string, string>> std;
 		List<Dictionary<string, string>> error;
 
-		public IEnumerable<Dictionary<string, string>> Input { get { return input; } }
-		public IEnumerable<Dictionary<string, string>> Output { get { return output; } }
-		public IEnumerable<Dictionary<string, string>> Error { get { return error; } }
+		public IEnumerable<Dictionary<string, string>> Std { get { return std.AsEnumerable(); } }
+		public IEnumerable<Dictionary<string, string>> Error { get { return error.AsEnumerable(); } }
 
         public Pipe()
         {
-			input = new List<Dictionary<string, string>>();
-			output = new List<Dictionary<string, string>>();
+			std = new List<Dictionary<string, string>>();
 			error = new List<Dictionary<string, string>>();
         }
 
@@ -40,29 +37,17 @@ namespace NDeployer
 			}
 		}
 
-        public void SwitchPipes()
+		public void AddToStandardPipe(Dictionary<string, string> data)
         {
-            input = output;
-			output = new List<Dictionary<string, string>>();
-			error = new List<Dictionary<string, string>>();
+            std.Add(data);
         }
 
-		public void KeepPipe()
-		{
-			output = input;
-		}
-
-		public void AddToOuputPipe(Dictionary<string, string> data)
-        {
-            output.Add(data);
-        }
-
-		public void AddToErrorPipe(string error, params string[] extra)
+		public void AddToErrorPipe(string text, params string[] extra)
 		{
 			Dictionary<string, string> data = new Dictionary<string, string> ();
-			error = string.Format(error, extra);
-			data.Add("error", error);
-			output.Add(data);
+			text = string.Format(text, extra);
+			data.Add("error", text);
+			error.Add(data);
 		}
 
         public void PrintErrorPipe()

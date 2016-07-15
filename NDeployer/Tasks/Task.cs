@@ -27,17 +27,24 @@ namespace NDeployer.Tasks
         {
             XAttribute attr = rootNode.Attribute(attrName);
             if (attr == null)
-            {
-                environment.Pipe.AddToErrorPipe("{0}: Not found attribute '{1}'", this.GetType().Name, attrName);
                 return null;
-            }
-            if (string.IsNullOrEmpty(attr.Value))
-            {
-				environment.Pipe.AddToErrorPipe("{0}: Attribute is empty: '{1}'", this.GetType().Name, attrName);
-                return null;
-            }
             return attr.Value;
         }
+
+		protected void AddAttributeNotFoundError(string attrName)
+		{
+			environment.Pipe.AddToErrorPipe("{0} - Not found attribute: {1}", this.GetType().Name, attrName);
+		}
+
+		protected void AddOneAttributeMandatoryError(params string[] attrNames)
+		{
+			string text = "";
+			if (attrNames.Count() > 0)
+				text = attrNames[0];
+			for (int i = 1; i < attrNames.Count(); i++)
+				text += ", " + attrNames[i];
+			environment.Pipe.AddToErrorPipe("{0} - One of these attributes is mandatory: {1}", this.GetType().Name, text);
+		}
 
 		protected void ExecuteContext(IEnumerable<XElement> elements)
 		{
@@ -48,7 +55,6 @@ namespace NDeployer.Tasks
 					environment.Pipe.PrintErrorPipe();
 					return;
 				}
-				environment.Pipe.SwitchPipes();
 
 				string name = child.Name.ToString();
 				Task t = TaskFactory.CreateTaskForTag(name);
@@ -66,4 +72,22 @@ namespace NDeployer.Tasks
 		}
 
     }
+
+	abstract class GeneratorTask : Task
+	{
+
+		public abstract void ExecuteGenerator();
+
+		public GeneratorTask(string name) : base(name)
+		{}
+
+		public override void Execute()
+		{
+			environment.PushPipe();
+			environment.NewPipe();
+			ExecuteGenerator();
+			environment.PopPipe();
+		}
+
+	}
 }
