@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System.Xml.Linq;
 
+using NDeployer.Script;
 using NDeployer.Util;
 
 namespace NDeployer.Tasks
@@ -20,7 +20,7 @@ namespace NDeployer.Tasks
             deployDir = null;
         }
 
-        public override bool ProcessXml(XElement rootNode)
+		public override bool ProcessTaskDef(TaskDef rootNode)
         {
             deployDir = GetAttribute(rootNode, "todir");
 			if (deployDir == null)

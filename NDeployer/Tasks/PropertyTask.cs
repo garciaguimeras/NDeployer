@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml.Linq;
+
+using NDeployer.Script;
 
 namespace NDeployer.Tasks
 {
@@ -18,13 +19,12 @@ namespace NDeployer.Tasks
             value = null;
         }
 
-        public override bool ProcessXml(XElement rootNode)
+        public override bool ProcessTaskDef(TaskDef rootNode)
         {
-            XAttribute nameAttr = rootNode.Attribute("name");
-            if (nameAttr == null)
+            name = rootNode.AttributeByName("name");
+			value = rootNode.AttributeByName("value");
+			if (name == null || value == null)
                 return false;
-            name = nameAttr.Value;
-            value = rootNode.Value;
             environment.AddProperty(name, value);
             return true;
         }

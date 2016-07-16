@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml.Linq;
 using System.IO;
 
+using NDeployer.Script;
 using NDeployer.Util;
 
 namespace NDeployer.Tasks
@@ -21,7 +21,7 @@ namespace NDeployer.Tasks
 			exclude = null;
 		}
 
-		public override bool ProcessXml(XElement rootNode)
+		public override bool ProcessTaskDef(TaskDef rootNode)
 		{
 			include = GetAttribute(rootNode, "include");
 			exclude = GetAttribute(rootNode, "exclude");

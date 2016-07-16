@@ -13,6 +13,25 @@ namespace NDeployer.Script
 
 		public TaskDef()
 		{}
+
+		public string AttributeByName(string name)
+		{
+			if (Attributes.ContainsKey(name))
+				return Attributes[name];
+			return null;
+		}
+
+		public List<TaskDef> TaskDefsByName(string name)
+		{
+			List<TaskDef> filtered = new List<TaskDef>();
+			foreach (TaskDef child in TaskDefs)
+			{
+				if (child.Name.Equals(name))
+					filtered.Add(child);
+			}
+			return filtered;
+		}
+
 	}
 }
 

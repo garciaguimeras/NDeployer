@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml.Linq;
+
+using NDeployer.Script;
 
 namespace NDeployer.Tasks
 {
@@ -13,7 +14,7 @@ namespace NDeployer.Tasks
 
         public string Name { get; protected set; }
 
-        public abstract bool ProcessXml(XElement rootNode);
+		public abstract bool ProcessTaskDef(TaskDef taskDef);
 
         public abstract void Execute();
 
@@ -23,12 +24,10 @@ namespace NDeployer.Tasks
 			Name = name;
         }
 
-        protected string GetAttribute(XElement rootNode, string attrName)
+		protected string GetAttribute(TaskDef rootNode, string attrName)
         {
-            XAttribute attr = rootNode.Attribute(attrName);
-            if (attr == null)
-                return null;
-            return attr.Value;
+            string attrValue = rootNode.AttributeByName(attrName);
+            return attrValue;
         }
 
 		protected void AddAttributeNotFoundError(string attrName)
@@ -46,9 +45,9 @@ namespace NDeployer.Tasks
 			environment.Pipe.AddToErrorPipe("{0} - One of these attributes is mandatory: {1}", this.GetType().Name, text);
 		}
 
-		protected void ExecuteContext(IEnumerable<XElement> elements)
+		protected void ExecuteContext(IEnumerable<TaskDef> children)
 		{
-			foreach (XElement child in elements)
+			foreach (TaskDef child in children)
 			{
 				if (environment.Pipe.Error.Count() > 0)
 				{
@@ -56,7 +55,7 @@ namespace NDeployer.Tasks
 					return;
 				}
 
-				string name = child.Name.ToString();
+				string name = child.Name;
 				Task t = TaskFactory.CreateTaskForTag(name);
 				if (t == null)
 				{
@@ -64,7 +63,7 @@ namespace NDeployer.Tasks
 					continue;
 				}
 
-				if (t.ProcessXml(child))
+				if (t.ProcessTaskDef(child))
 				{
 					t.Execute();
 				}

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml.Linq;
 using System.IO;
 
+using NDeployer.Script;
 using NDeployer.Tasks;
 using NDeployer.Util;
 
@@ -13,39 +13,31 @@ namespace NDeployer.Tasks
 	class RootTask : GeneratorTask
 	{
 
-		string filename;
+		TaskDef root;
 
-		public RootTask(string filename) : base("xml")
+		public RootTask() : base("xml")
 		{
-			this.filename = filename;
+			root = null;
 		}
 
-		private void ReadProperties(XElement root)
+		private void ReadProperties()
 		{
-			foreach (XElement element in root.Elements("property"))
+			foreach (TaskDef element in root.TaskDefsByName("property"))
 			{
-				TaskFactory.CreateTaskForTag("property").ProcessXml(element);
+				TaskFactory.CreateTaskForTag("property").ProcessTaskDef(element);
 			}
 		}
 
-		private XElement GetDocumentRoot()
+		public override bool ProcessTaskDef(TaskDef rootNode)
 		{
-			XDocument xDoc = XDocument.Load(filename);
-			IEnumerable<XElement> elements = xDoc.Elements("xml");
-			if (elements.Count() != 1)
-				return null;
-			return elements.First();
-		}
-
-		public override bool ProcessXml(XElement rootNode)
-		{
-			if (rootNode == null)
+			root = rootNode;
+			if (root == null)
 			{
 				environment.Pipe.AddToErrorPipe("Invalid build file. Can't find document root");
 				return false;
 			}
 
-			ReadProperties(rootNode);
+			ReadProperties();
 			bool result = PropertyEvaluator.EvalAllProperties();
 			if (!result)
 			{
@@ -58,16 +50,13 @@ namespace NDeployer.Tasks
 
 		public override void ExecuteGenerator()
 		{
-			XElement root = GetDocumentRoot();
-			ProcessXml(root);
-
 			if (environment.Pipe.Error.Count() > 0)
 			{
 				environment.Pipe.PrintErrorPipe();
 				return;
 			}
 
-			IEnumerable<XElement> elements = root.Elements().Where(e => !e.Name.ToString().Equals("property"));
+			IEnumerable<TaskDef> elements = root.TaskDefs.Where(t => !t.Name.Equals("property"));
 			ExecuteContext(elements);
 		}
 

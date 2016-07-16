@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml.Linq;
 using System.IO;
 
+using NDeployer.Script;
 using NDeployer.Util;
 
 namespace NDeployer.Tasks
@@ -14,14 +14,14 @@ namespace NDeployer.Tasks
     {
 
         string filename;
-		XElement root;
+		TaskDef root;
 
 		public FileTask(string name) : base(name)
         {
             filename = null;
         }
 
-        public override bool ProcessXml(XElement rootNode)
+        public override bool ProcessTaskDef(TaskDef rootNode)
         {
 			root = rootNode;
             filename = GetAttribute(rootNode, "name");
@@ -83,7 +83,7 @@ namespace NDeployer.Tasks
                 ReadDirectory(filename, ".");
 
 			// Execute tasks in context
-			ExecuteContext(root.Elements());
+			ExecuteContext(root.TaskDefs);
         }
 
     }
