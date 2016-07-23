@@ -18,7 +18,15 @@ namespace NDeployer
 
         private static void log(LogType type, int level, string text, params object[] args)
         {
-            string formattedText = string.Format(text, args);
+			string formattedText = "";
+			try
+			{
+				formattedText = string.Format(text, args);
+			}
+			catch (Exception e)
+			{
+				formattedText = text;
+			}
             for (int i = 0; i < level - 1; i++)
                 formattedText = "  " + formattedText;  
             Console.WriteLine("{0} - [{1}] - {2}", DateTime.Now, type, formattedText);

@@ -99,24 +99,35 @@ namespace NDeployer.Util
 
             foreach (string key in environment.Properties.Keys)
             {
-                try
-                {
-                    PropertyItem item = EvalProperty(key, new Stack<string>());
-                    if (item == null)
-                    {
-                        environment.Pipe.AddToErrorPipe("Property {0} not found", item.Name);
-                        return false;
-                    }
-                    Logger.info("Property {0} = {1}", item.Name, item.EvalValue);
-                }
-                catch (PropertyEvaluatorException e)
-                {
-                    environment.Pipe.AddToErrorPipe(e.Message);
-                    return false;
-                }
+				bool result = EvalProperty(key);
+				if (!result)
+					return false;
             }
             return true;
         }
+
+		public static bool EvalProperty(string key)
+		{
+			Environment environment = Environment.GetEnvironment();
+
+			try
+			{
+				PropertyItem item = EvalProperty(key, new Stack<string>());
+				if (item == null)
+				{
+					environment.Pipe.AddToErrorPipe("Property {0} not found", item.Name);
+					return false;
+				}
+				Logger.info("Property {0} = {1}", item.Name, item.EvalValue);
+			}
+			catch (PropertyEvaluatorException e)
+			{
+				environment.Pipe.AddToErrorPipe(e.Message);
+				return false;
+			}
+
+			return true;
+		}
 
         public static string EvalValue(string value)
         {
@@ -125,7 +136,7 @@ namespace NDeployer.Util
             try
             {
                 PropertyItem item = EvalPropertyItem(new PropertyItem { Name = "", Value = value, EvalValue = null }, new Stack<string>());
-                Logger.info("Property {0} = {1}", item.Name, item.EvalValue);
+                Logger.info("Value {0}", item.EvalValue);
                 return item.EvalValue;
             }
             catch (PropertyEvaluatorException e)

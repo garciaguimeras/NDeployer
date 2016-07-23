@@ -33,27 +33,22 @@ namespace NDeployer.Tasks
             return true;
         }
 
-		public void AddToStandardPipe(string filename, string relativePath)
+		private void AddToStandardPipe(string filename, string relativePath)
 		{
 			Dictionary<string, string> data = new Dictionary<string, string>();
 			data.Add("filename", filename);
 			data.Add("relativePath", relativePath);
 			environment.Pipe.AddToStandardPipe(data);
 		}
-
-        private void ReadDirectory(string path, string relativePath)
+			
+        private void ReadDirectory(string path)
         {
-            string[] files = Directory.GetFiles(path);
+			IEnumerable<string> files = FileUtil.ReadDirectoryRecursively(path);
             foreach (string f in files)
+			{
                 // Add filename + relativePath
+				string relativePath = FileUtil.GetRelativePath(f, path);
 				AddToStandardPipe(f, relativePath);
-
-            string[] dirs = Directory.GetDirectories(path);
-            foreach (string dir in dirs)
-            {
-                string dName = Path.GetFileName(dir);
-                string dRelativePath = relativePath + Path.DirectorySeparatorChar + dName;
-                ReadDirectory(dir, dRelativePath);
             }
         }
 
@@ -80,7 +75,7 @@ namespace NDeployer.Tasks
     
 			// ...or add a whole directory
             if (Directory.Exists(filename))
-                ReadDirectory(filename, ".");
+                ReadDirectory(filename);
 
 			// Execute tasks in context
 			ExecuteContext(root.TaskDefs);

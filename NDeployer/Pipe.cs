@@ -45,7 +45,12 @@ namespace NDeployer
 		public void AddToErrorPipe(string text, params string[] extra)
 		{
 			Dictionary<string, string> data = new Dictionary<string, string> ();
-			text = string.Format(text, extra);
+			try
+			{
+				text = string.Format(text, extra);
+			}
+			catch (Exception e)
+			{}
 			data.Add("error", text);
 			error.Add(data);
 		}

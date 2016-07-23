@@ -47,14 +47,14 @@ namespace NDeployer.Tasks
 
 		protected void ExecuteContext(IEnumerable<TaskDef> children)
 		{
+			if (environment.Pipe.Error.Count() > 0)
+			{
+				environment.Pipe.PrintErrorPipe();
+				return;
+			}
+
 			foreach (TaskDef child in children)
 			{
-				if (environment.Pipe.Error.Count() > 0)
-				{
-					environment.Pipe.PrintErrorPipe();
-					return;
-				}
-
 				string name = child.Name;
 				Task t = TaskFactory.CreateTaskForTag(name);
 				if (t == null)
@@ -66,6 +66,12 @@ namespace NDeployer.Tasks
 				if (t.ProcessTaskDef(child))
 				{
 					t.Execute();
+				}
+
+				if (environment.Pipe.Error.Count() > 0)
+				{
+					environment.Pipe.PrintErrorPipe();
+					return;
 				}
 			}
 		}

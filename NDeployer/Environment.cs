@@ -14,8 +14,29 @@ namespace NDeployer
         public string EvalValue { get; set; }
     }
 
+	static class SystemEnvironmentProperties
+	{
+		public static string OS
+		{ 
+			get { return System.Environment.OSVersion.Platform.ToString(); }
+		}
+
+		public static string HostName
+		{
+			get { return System.Environment.MachineName; }
+		}
+
+		public static string UserName
+		{
+			get { return System.Environment.GetEnvironmentVariable("USERNAME"); }
+		}
+
+	}
+
     class Environment
     {
+		public const string HOSTNAME = "ENV.HOST";
+		public const string USERNAME = "ENV.USER";
 
         private static Environment instance = null;
 
@@ -38,7 +59,15 @@ namespace NDeployer
             properties = new Dictionary<string, PropertyItem>();
 			pipeStack = new Stack<Pipe>();
             pipe = new Pipe();
+
+			FillSystemEnvironmentProperties();
         }
+
+		private void FillSystemEnvironmentProperties()
+		{
+			AddProperty(HOSTNAME, SystemEnvironmentProperties.HostName);
+			AddProperty(USERNAME, SystemEnvironmentProperties.UserName);
+		}
 
         public void AddProperty(string name, string value)
         {
@@ -64,8 +93,14 @@ namespace NDeployer
 
 		public void PopPipe()
 		{
+			IEnumerable<Dictionary<string, string>> errorPipe = pipe.Error;
+
 			if (pipeStack.Count > 0)
+			{
 				pipe = pipeStack.Pop();
+				foreach (Dictionary<string, string> data in errorPipe)
+					pipe.AddToErrorPipe(data["error"]);
+			}
 		}
 
 		public void NewPipe()

@@ -35,6 +35,12 @@ namespace NDeployer.Tasks
 
 				case "clear-pipe":
 					return new ClearPipeTask(tag);
+
+				case "with":
+					return new WithTask(tag);
+
+				case "unzip":
+					return new UnzipTask(tag);
             }
 
             return null;

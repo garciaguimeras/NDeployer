@@ -14,18 +14,12 @@ namespace NDeployer.Tasks
 	{
 
 		TaskDef root;
+		List<Task> propertyTasks;
 
 		public RootTask() : base("xml")
 		{
 			root = null;
-		}
-
-		private void ReadProperties()
-		{
-			foreach (TaskDef element in root.TaskDefsByName("property"))
-			{
-				TaskFactory.CreateTaskForTag("property").ProcessTaskDef(element);
-			}
+			propertyTasks = new List<Task>();
 		}
 
 		public override bool ProcessTaskDef(TaskDef rootNode)
@@ -37,12 +31,15 @@ namespace NDeployer.Tasks
 				return false;
 			}
 
-			ReadProperties();
-			bool result = PropertyEvaluator.EvalAllProperties();
-			if (!result)
+			foreach (TaskDef element in root.TaskDefsByName("property"))
 			{
-				environment.Pipe.AddToErrorPipe("Error evaluating properties. Execution suspended.");
-				return false;
+				Task t = TaskFactory.CreateTaskForTag("property");
+				if (!t.ProcessTaskDef(element))
+				{
+					environment.Pipe.AddToErrorPipe("Property incorrectly defined. Must use  attributes 'name' and 'value', or else 'filename'. Execution suspended.");
+					return false;
+				}
+				propertyTasks.Add(t);
 			}
 
 			return true;
@@ -50,10 +47,14 @@ namespace NDeployer.Tasks
 
 		public override void ExecuteGenerator()
 		{
-			if (environment.Pipe.Error.Count() > 0)
+			foreach (Task t in propertyTasks)
 			{
-				environment.Pipe.PrintErrorPipe();
-				return;
+				t.Execute();
+				if (environment.Pipe.Error.Count() > 0)
+				{
+					environment.Pipe.PrintErrorPipe();
+					return;
+				}
 			}
 
 			IEnumerable<TaskDef> elements = root.TaskDefs.Where(t => !t.Name.Equals("property"));

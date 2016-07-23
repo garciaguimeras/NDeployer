@@ -15,11 +15,18 @@ namespace NDeployer
 
         static void Main(string[] args)
         {
+			Environment environment = Environment.GetEnvironment();
+
 			ScriptFile scriptFile = ScriptFactory.GetScriptForFilename(BUILD_FILENAME);
 			TaskDef rootTaskDef = scriptFile.Parse(BUILD_FILENAME);
 
 			RootTask rootTask = new RootTask();
 			rootTask.ProcessTaskDef(rootTaskDef);
+			if (environment.Pipe.Error.Count() > 0)
+			{
+				environment.Pipe.PrintErrorPipe();
+				return;
+			}
 			rootTask.Execute();
         }
     }
