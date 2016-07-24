@@ -7,9 +7,9 @@
 
 	<property name="DOCUMENTS.DIR">/home/noel/Documents</property>
 	<property name="SRC.DIR">${DOCUMENTS.DIR}/ng-test</property>
-	<property name="ZIP.FILE">${DOCUMENTS.DIR}/ng-test.zip</property>
-	<property name="DEPLOY.DIR.1">${DOCUMENTS.DIR}/TestDest</property>
-	<property name="DEPLOY.DIR.2">${DOCUMENTS.DIR}/TestDestFlatten</property>
+	<property name="ZIP.FILE">${DOCUMENTS.DIR}/X/ng-test.zip</property>
+	<property name="DEPLOY.DIR.1">${DOCUMENTS.DIR}/X/TestDest</property>
+	<property name="DEPLOY.DIR.2">${DOCUMENTS.DIR}/X/TestDestFlatten</property>
 
 <!--
 	<file name="${SRC.DIR}">

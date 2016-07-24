@@ -41,29 +41,44 @@ namespace NDeployer.Tasks
 			environment.Pipe.AddToStandardPipe(data);
 		}
 
-		private void ReadDirectory(string path)
-		{
-			IEnumerable<string> files = FileUtil.ReadDirectoryRecursively(path);
-			foreach (string f in files)
-			{
-				// Add filename + relativePath
-				string relativePath = FileUtil.GetRelativePath(f, path);
-				AddToStandardPipe(f, relativePath);
-			}
-		}
-
 		private string UnzipFile(string filename)
 		{
-			string dirName = filename + ".tmpdir";
+			string baseDir = filename + ".tmpdir";
 
-			if (Directory.Exists(dirName))
-				FileUtil.DeleteDirectoryRecursively(dirName);
+			if (Directory.Exists(baseDir))
+				FileUtil.DeleteDirectoryRecursively(baseDir);
 						
 			ZipFile zipFile = new ZipFile(filename);
-			zipFile.ExtractAll(dirName);
+			foreach (ZipEntry entry in zipFile.Entries)
+			{
+				Console.WriteLine(entry.FileName);
+
+				string extractedFilename = baseDir + Path.DirectorySeparatorChar + entry.FileName;
+				if (entry.IsDirectory)
+				{
+					Directory.CreateDirectory(extractedFilename);
+					continue;
+				}
+
+				//Path.GetDirectoryName(extractedFilename)
+				int size = 0;
+				byte[] buffer = new byte[1024];
+				Stream inStream = entry.OpenReader();
+				FileStream f = File.OpenWrite(extractedFilename);
+
+				while ((size = inStream.Read(buffer, 0, buffer.Length)) > 0)
+					f.Write(buffer, 0, size);
+
+				f.Close();
+				inStream.Close();
+
+				// Add filename + relativePath
+				string relativePath = FileUtil.GetRelativePath(extractedFilename, baseDir);
+				AddToStandardPipe(extractedFilename, relativePath);
+			}
 			zipFile.Dispose();
 
-			return dirName;
+			return baseDir;
 		}
 
 		public override void ExecuteGenerator()
@@ -92,7 +107,6 @@ namespace NDeployer.Tasks
 
 			// Unzip file into temp directory and add to pipe
 			string tmpDirName = UnzipFile(filename);
-			ReadDirectory(tmpDirName);
 
 			// Execute tasks in context
 			ExecuteContext(root.TaskDefs);
