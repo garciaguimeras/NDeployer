@@ -47,6 +47,7 @@ namespace NDeployer.Tasks
 
 			if (Directory.Exists(baseDir))
 				FileUtil.DeleteDirectoryRecursively(baseDir);
+			Directory.CreateDirectory(baseDir);
 						
 			ZipFile zipFile = new ZipFile(filename);
 			foreach (ZipEntry entry in zipFile.Entries)
