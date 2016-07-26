@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -25,6 +26,11 @@ namespace NDeployer
 		{
 			Environment environment = Environment.GetEnvironment();
 
+			if (!File.Exists(filename))
+			{
+				Console.WriteLine("Error: File not found {0}", filename);
+				return;
+			}
 			ScriptFile scriptFile = ScriptFactory.GetScriptForFilename(filename);
 			TaskDef rootTaskDef = scriptFile.Parse(filename);
 

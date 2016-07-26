@@ -18,6 +18,9 @@ namespace NDeployer.Tasks
                 case "file":
                     return new FileTask(tag);
 
+				case "new-file":
+					return new NewFileTask(tag);
+
                 case "copy":
                     return new CopyTask(tag);
 

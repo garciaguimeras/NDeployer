@@ -90,6 +90,7 @@
     <Compile Include="Util\PropertyFileReader.cs" />
     <Compile Include="Tasks\PrintTask.cs" />
     <Compile Include="Tasks\ChangeRelativeDirTask.cs" />
+    <Compile Include="Tasks\NewFileTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

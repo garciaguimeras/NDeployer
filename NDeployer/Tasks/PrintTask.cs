@@ -73,6 +73,13 @@ namespace NDeployer.Tasks
 			return eval;
 		}
 
+		private void AddToStandardPipe(string text)
+		{
+			Dictionary<string, string> data = new Dictionary<string, string>();
+			data.Add("print", text);
+			environment.Pipe.AddToStandardPipe(data);
+		}
+
 		public override void Execute()
 		{
 			text = PropertyEvaluator.EvalValue(text);
@@ -83,8 +90,11 @@ namespace NDeployer.Tasks
 			if (references.Count == 0)
 			{
 				Console.WriteLine(text);
+				AddToStandardPipe(text);
 				return;
 			}
+
+			List<string> textList = new List<string>();
 
 			IEnumerable<Dictionary<string, string>> input = environment.Pipe.FilterStandardPipe("include", "exclude");
 			foreach (Dictionary<string, string> data in input)
@@ -100,6 +110,12 @@ namespace NDeployer.Tasks
 				}
 
 				Console.WriteLine(txt);
+				textList.Add(txt);
+			}
+
+			foreach (string text in textList)
+			{	
+				AddToStandardPipe(text);
 			}
 		}
 
