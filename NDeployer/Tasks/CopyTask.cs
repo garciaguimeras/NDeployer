@@ -14,14 +14,17 @@ namespace NDeployer.Tasks
     {
 
         string deployDir;
+		TaskDef root;
 
 		public CopyTask(string name) : base(name)
         {
             deployDir = null;
+			root = null;
         }
 
 		public override bool ProcessTaskDef(TaskDef rootNode)
         {
+			root = rootNode;
             deployDir = GetAttribute(rootNode, "todir");
 			if (deployDir == null)
 			{
@@ -30,22 +33,6 @@ namespace NDeployer.Tasks
 			}
             return true;
         }
-
-		private List<Dictionary<string, string>> FilterInputPipe(IEnumerable<Dictionary<string, string>> input)
-		{
-			List<Dictionary<string, string>> notExcluded = new List<Dictionary<string, string>>();
-			List<Dictionary<string, string>> included = new List<Dictionary<string, string>>();
-			foreach (Dictionary<string, string> data in input)
-			{
-				if (data.ContainsKey("include") && data["include"].Equals(""))
-					included.Add(data);
-				if (!data.ContainsKey("exclude") || !data["exclude"].Equals(""))
-					notExcluded.Add(data);
-			}
-			if (included.Count() > 0)
-				return included;
-			return notExcluded;
-		}
 
         public override void Execute()
         {
@@ -56,15 +43,16 @@ namespace NDeployer.Tasks
                 return;
             }
             
-            Logger.info("Deploying to directory: {0}", deployDir);
+            // Logger.info("Deploying to directory: {0}", deployDir);
             if (!Directory.Exists(deployDir))
             {
-                Logger.info(2, "Creating new directory: {0}", deployDir);
+                // Logger.info(2, "Creating new directory: {0}", deployDir);
                 Directory.CreateDirectory(deployDir);
             }
 
-			IEnumerable<Dictionary<string, string>> input = environment.Pipe.Std;
-			input = FilterInputPipe(input);
+			List<Dictionary<string, string>> copied = new List<Dictionary<string, string>>();
+
+			IEnumerable<Dictionary<string, string>> input = environment.Pipe.FilterStandardPipe("include", "exclude");
 			foreach (Dictionary<string, string> data in input)
             {
 				if (!data.ContainsKey("filename") || !File.Exists(data["filename"])) 
@@ -75,20 +63,44 @@ namespace NDeployer.Tasks
 				}
 
 				string filename = data["filename"];
+
+				// Is flatten?
 				bool flatten = data.ContainsKey("flatten") && data["flatten"].Equals("");
 				string destDir = !flatten && data.ContainsKey("relativePath") ? data["relativePath"] : ".";
+				destDir = FileUtil.FixDirectorySeparator(destDir);
 
-                Logger.info(2, "Deploying file {0}", filename);
+				// Change relative dir?
+				string cd = data.ContainsKey("changeRelativeDir") ? data["changeRelativeDir"] : "";
+				cd = FileUtil.FixDirectorySeparator(cd);
+				if (destDir.Equals(cd))
+					destDir = "";
+				else
+				{
+					if (destDir.StartsWith(cd + Path.DirectorySeparatorChar))
+					{
+						destDir = destDir.Substring(cd.Length + 1);
+					}
+				}
+
+                // Logger.info(2, "Deploying file {0}", filename);
 
 				string fName = Path.GetFileName(filename);
-                destDir = Path.Combine(deployDir, destDir);
-                string destFile = Path.Combine(destDir, fName);
+                string fullDestDir = Path.Combine(deployDir, destDir);
+				string destFile = Path.Combine(fullDestDir, fName);
 
-                if (!Directory.Exists(destDir))
-                    Directory.CreateDirectory(destDir);
+				data.Add("copied-to", destDir);
+				copied.Add(data);
+
+				if (!Directory.Exists(fullDestDir))
+					Directory.CreateDirectory(fullDestDir);
                 File.Copy(filename, destFile, true);
             }
 
+			// Execute children tasks
+			environment.PushPipe();
+			environment.NewPipe(copied);
+			ExecuteContext(root.TaskDefs);
+			environment.PopPipe();
         }
 
     }

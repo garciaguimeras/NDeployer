@@ -8,13 +8,15 @@ using NDeployer.Script;
 
 namespace NDeployer.Tasks
 {
-	class WithTask : Task
+	class WithTask : GeneratorTask
 	{
 
 		TaskDef root;
 
 		public WithTask(string name) : base(name)
-		{}
+		{
+			KeepContext = true;
+		}
 
 		public override bool ProcessTaskDef(TaskDef rootNode)
 		{
@@ -22,11 +24,9 @@ namespace NDeployer.Tasks
 			return true;
 		}
 
-		public override void Execute()
+		public override void ExecuteGenerator()
 		{
-			environment.PushPipe();
 			ExecuteContext(root.TaskDefs);
-			environment.PopPipe();
 		}
 
 	}

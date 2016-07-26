@@ -53,6 +53,13 @@ namespace NDeployer.Util
 			return relativePath;
 		}
 
+		public static string FixDirectorySeparator(string str)
+		{
+			str = str.Replace("/", Path.DirectorySeparatorChar.ToString());
+			str = str.Replace("\\", Path.DirectorySeparatorChar.ToString());
+			return str;
+		}
+
 	}
 }
 

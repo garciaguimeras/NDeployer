@@ -42,6 +42,22 @@ namespace NDeployer
             std.Add(data);
         }
 
+		public List<Dictionary<string, string>> FilterStandardPipe(string includeKey, string excludeKey)
+		{
+			List<Dictionary<string, string>> notExcluded = new List<Dictionary<string, string>>();
+			List<Dictionary<string, string>> included = new List<Dictionary<string, string>>();
+			foreach (Dictionary<string, string> data in Std)
+			{
+				if (data.ContainsKey(includeKey) && data[includeKey].Equals(""))
+					included.Add(data);
+				if (!data.ContainsKey(excludeKey) || !data[excludeKey].Equals(""))
+					notExcluded.Add(data);
+			}
+			if (included.Count() > 0)
+				return included;
+			return notExcluded;
+		}
+
 		public void AddToErrorPipe(string text, params string[] extra)
 		{
 			Dictionary<string, string> data = new Dictionary<string, string> ();

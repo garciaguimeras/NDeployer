@@ -24,6 +24,9 @@ namespace NDeployer.Tasks
 				case "flatten":
 					return new FlattenTask(tag);
 
+				case "change-relative-dir":
+					return new ChangeRelativeDirTask(tag);
+
 				case "filter":
 					return new FilterTask(tag);
 
@@ -41,6 +44,9 @@ namespace NDeployer.Tasks
 
 				case "unzip":
 					return new UnzipTask(tag);
+
+				case "print":
+					return new PrintTask(tag);
             }
 
             return null;

@@ -14,7 +14,7 @@ namespace NDeployer.Tasks
 
         public string Name { get; protected set; }
 
-		public abstract bool ProcessTaskDef(TaskDef taskDef);
+		public abstract bool ProcessTaskDef(TaskDef rootNode);
 
         public abstract void Execute();
 
@@ -81,15 +81,20 @@ namespace NDeployer.Tasks
 	abstract class GeneratorTask : Task
 	{
 
+		protected bool KeepContext { get; set; }
+
 		public abstract void ExecuteGenerator();
 
 		public GeneratorTask(string name) : base(name)
-		{}
+		{
+			KeepContext = false;
+		}
 
 		public override void Execute()
 		{
 			environment.PushPipe();
-			environment.NewPipe();
+			if (!KeepContext)
+				environment.NewPipe();
 			ExecuteGenerator();
 			environment.PopPipe();
 		}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -74,6 +75,10 @@ namespace NDeployer.Util
 
             // Check pending properties
             CheckPendingProperties(item);
+
+			// Fix directory separator
+			item.EvalValue = FileUtil.FixDirectorySeparator(item.EvalValue);
+
             return item;
         }
 
@@ -118,7 +123,7 @@ namespace NDeployer.Util
 					environment.Pipe.AddToErrorPipe("Property {0} not found", item.Name);
 					return false;
 				}
-				Logger.info("Property {0} = {1}", item.Name, item.EvalValue);
+				// Logger.info("Property {0} = {1}", item.Name, item.EvalValue);
 			}
 			catch (PropertyEvaluatorException e)
 			{
@@ -136,7 +141,7 @@ namespace NDeployer.Util
             try
             {
                 PropertyItem item = EvalPropertyItem(new PropertyItem { Name = "", Value = value, EvalValue = null }, new Stack<string>());
-                Logger.info("Value {0}", item.EvalValue);
+                // Logger.info("Value {0}", item.EvalValue);
                 return item.EvalValue;
             }
             catch (PropertyEvaluatorException e)

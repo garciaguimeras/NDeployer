@@ -107,5 +107,12 @@ namespace NDeployer
 		{
 			pipe = new Pipe();
 		}
+
+		public void NewPipe(List<Dictionary<string, string>> stdData)
+		{
+			pipe = new Pipe();
+			foreach (Dictionary<string, string> item in stdData)
+				pipe.AddToStandardPipe(item);
+		}
     }
 }

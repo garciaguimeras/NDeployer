@@ -50,18 +50,19 @@ namespace NDeployer.Tasks
 			Directory.CreateDirectory(baseDir);
 						
 			ZipFile zipFile = new ZipFile(filename);
-			foreach (ZipEntry entry in zipFile.Entries)
+
+			// Create directory structure
+			foreach (ZipEntry entry in zipFile.Entries.Where(e => e.IsDirectory))
 			{
-				Console.WriteLine(entry.FileName);
-
 				string extractedFilename = baseDir + Path.DirectorySeparatorChar + entry.FileName;
-				if (entry.IsDirectory)
-				{
-					Directory.CreateDirectory(extractedFilename);
-					continue;
-				}
+				Directory.CreateDirectory(extractedFilename);
+			}
 
-				//Path.GetDirectoryName(extractedFilename)
+			// Extract files
+			foreach (ZipEntry entry in zipFile.Entries.Where(e => !e.IsDirectory))
+			{
+				string extractedFilename = baseDir + Path.DirectorySeparatorChar + entry.FileName;
+
 				int size = 0;
 				byte[] buffer = new byte[1024];
 				Stream inStream = entry.OpenReader();

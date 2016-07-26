@@ -3,11 +3,13 @@
 	<property name="USERNAME">${ENV.USER}</property>
 	<property name="HOSTNAME">${ENV.HOST}</property>
 
+	<!--
 	<property filename="/home/noel/Projects/NDeployer/NDeployer/Resources/${USERNAME}-${HOSTNAME}.properties" />
+	-->
 
 	<property name="DOCUMENTS.DIR">/home/noel/Documents</property>
 	<property name="SRC.DIR">${DOCUMENTS.DIR}/ng-test</property>
-	<property name="ZIP.FILE">${DOCUMENTS.DIR}/X/ng-test.zip</property>
+	<property name="ZIP.FILE">/run/media/noel/8gDevCa/NDeployer/Zip/NavMenuDemoSkin.zip</property>
 	<property name="DEPLOY.DIR.1">${DOCUMENTS.DIR}/X/TestDest</property>
 	<property name="DEPLOY.DIR.2">${DOCUMENTS.DIR}/X/TestDestFlatten</property>
 
@@ -19,11 +21,20 @@
 		<with>
 		    <flatten />
 			<filter exclude="*.js" />
-			<copy todir="${DEPLOY.DIR.2}" />
+			<copy todir="${DEPLOY.DIR.2}">
+				<print text="Deploying to ${DEPLOY.DIR.2}" />
+				<print text="  == File: [[filename]]" />
+			</copy>
 		</with>
 
+		<print text="" />
+
 		<with>
-			<copy todir="${DEPLOY.DIR.1}" />
+			<change-relative-dir path="NavMenuDemoSkin" />
+			<copy todir="${DEPLOY.DIR.1}">
+				<print text="Deploying to ${DEPLOY.DIR.1}" />
+				<print text="  == File: [[filename]]" />
+			</copy>
 		</with>
 
 	</unzip>
