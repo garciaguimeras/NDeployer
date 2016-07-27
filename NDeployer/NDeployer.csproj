@@ -58,6 +58,9 @@
     <Reference Include="Ionic.Zip">
       <HintPath>libs\Ionic.Zip.dll</HintPath>
     </Reference>
+    <Reference Include="FlatXml">
+      <HintPath>libs\FlatXml.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Environment.cs" />
@@ -83,7 +86,6 @@
     <Compile Include="Script\ScriptFile.cs" />
     <Compile Include="Script\XmlFile.cs" />
     <Compile Include="Script\ScriptFactory.cs" />
-    <Compile Include="Script\Parser\TagParser.cs" />
     <Compile Include="Tasks\WithTask.cs" />
     <Compile Include="Tasks\UnzipTask.cs" />
     <Compile Include="Util\FileUtil.cs" />
@@ -91,6 +93,7 @@
     <Compile Include="Tasks\PrintTask.cs" />
     <Compile Include="Tasks\ChangeRelativeDirTask.cs" />
     <Compile Include="Tasks\NewFileTask.cs" />
+    <Compile Include="Script\FXmlFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -120,11 +123,10 @@
   <ItemGroup>
     <Folder Include="Util\" />
     <Folder Include="Script\" />
-    <Folder Include="Script\Parser\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\NBuild.script" />
     <None Include="Resources\noel-uqbar.properties" />
     <None Include="Resources\noel-Reykjavik.properties" />
+    <None Include="Resources\NBuild.fxml" />
   </ItemGroup>
 </Project>

@@ -32,7 +32,18 @@ namespace NDeployer
 				return;
 			}
 			ScriptFile scriptFile = ScriptFactory.GetScriptForFilename(filename);
+			if (scriptFile == null)
+			{
+				Console.WriteLine("Error: Invalid file type or extension {0}", filename);
+				return;
+			}
+
 			TaskDef rootTaskDef = scriptFile.Parse(filename);
+			if (rootTaskDef == null)
+			{
+				Console.WriteLine("Error: Could not parse file {0}", filename);
+				return;
+			}
 
 			RootTask rootTask = new RootTask();
 			rootTask.ProcessTaskDef(rootTaskDef);

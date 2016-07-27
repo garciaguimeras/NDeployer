@@ -12,7 +12,11 @@ namespace NDeployer.Script
 		public List<TaskDef> TaskDefs { get; set; }
 
 		public TaskDef()
-		{}
+		{
+			Name = "";
+			Attributes = new Dictionary<string, string>();
+			TaskDefs = new List<TaskDef>();
+		}
 
 		public string AttributeByName(string name)
 		{

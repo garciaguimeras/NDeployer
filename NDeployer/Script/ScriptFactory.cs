@@ -11,6 +11,9 @@ namespace NDeployer.Script
 
 			if (filename.EndsWith(".xml"))
 				return new XmlFile();
+			
+			if (filename.EndsWith(".fxml"))
+				return new FXmlFile();
 
 			return null;
 		}
