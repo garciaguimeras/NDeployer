@@ -1,25 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 
 using NDeployer.Script;
 using NDeployer.Tasks;
 
 namespace NDeployer
 {
+	class ProgramInfo
+	{
+		public string Name { get; set; }
+		public string Version { get; set; }
+		public string Description { get; set; }
+		public string Copyright { get; set; }
+	}
+
     class Program
     {
-		
+
+		private ProgramInfo GetAssemblyInfo()
+		{
+			Assembly assembly = Assembly.GetExecutingAssembly();
+			AssemblyName assemblyName = assembly.GetName();
+			AssemblyDescriptionAttribute description = (AssemblyDescriptionAttribute)assembly.GetCustomAttribute(typeof(AssemblyDescriptionAttribute));
+			AssemblyCopyrightAttribute copyright = (AssemblyCopyrightAttribute)assembly.GetCustomAttribute(typeof(AssemblyCopyrightAttribute));
+			return new ProgramInfo
+			{
+				Name = assemblyName.Name,
+				Version = assemblyName.Version.ToString(),
+				Description = description.Description,
+				Copyright = copyright.Copyright
+			};
+		}
+
 		private void PrintHelp()
 		{
-			Console.WriteLine();
 			Console.WriteLine("Usage: NDeployer [option]");
 			Console.WriteLine();
 			Console.WriteLine("Options:");
 			Console.WriteLine("    -f <build file>    Runs a build file");
 			Console.WriteLine("    -help              Prints this help");
+			Console.WriteLine("    -info              Prints app version and copyright information");
+			Console.WriteLine();
 		}
 
 		private void RunBuildFile(string filename)
@@ -55,12 +78,13 @@ namespace NDeployer
 			rootTask.Execute();
 		}
 
-		private void CheckOptions(string[] args)
+		private void CheckOptions(string[] args, ProgramInfo programInfo)
 		{
 			int totalParams = args.Count();
 			if (totalParams == 0)
 			{
-				Console.WriteLine("Error: Need an option");
+				Console.WriteLine("Error: Missing option");
+				Console.WriteLine();
 				PrintHelp();
 				return;
 			}
@@ -71,7 +95,8 @@ namespace NDeployer
 				case "-f":
 					if (totalParams < 2)
 					{
-						Console.WriteLine("Error: Needs a build file name");
+						Console.WriteLine("Error: Missing build file name");
+						Console.WriteLine();
 						PrintHelp();
 						return;
 					}
@@ -80,6 +105,11 @@ namespace NDeployer
 				
 				case "-help":
 					PrintHelp();
+					break;
+
+				case "-info":
+					Console.WriteLine("Current version: {0}", programInfo.Version);
+					Console.WriteLine(programInfo.Copyright);
 					break;
 				
 				default:
@@ -91,8 +121,11 @@ namespace NDeployer
 
 		public void Execute(string[] args)
 		{
-			Console.WriteLine("NDeployer v0.1");
-			CheckOptions(args);
+			ProgramInfo programInfo = GetAssemblyInfo();
+			Console.WriteLine("{0} v{1}", programInfo.Name, programInfo.Version);
+			Console.WriteLine(programInfo.Description);
+			Console.WriteLine();
+			CheckOptions(args, programInfo);
 		}
 
         static void Main(string[] args)
