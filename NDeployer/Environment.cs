@@ -33,6 +33,11 @@ namespace NDeployer
 
 	}
 
+	class Context
+	{
+		
+	}
+
     class Environment
     {
 		public const string HOSTNAME = "ENV.HOST";

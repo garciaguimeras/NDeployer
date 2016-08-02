@@ -94,6 +94,8 @@
     <Compile Include="Tasks\ChangeRelativeDirTask.cs" />
     <Compile Include="Tasks\NewFileTask.cs" />
     <Compile Include="Script\FXmlFile.cs" />
+    <Compile Include="Tasks\FunctionTask.cs" />
+    <Compile Include="Tasks\ReadLineTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

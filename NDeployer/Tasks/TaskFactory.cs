@@ -21,8 +21,11 @@ namespace NDeployer.Tasks
 				case "new-file":
 					return new NewFileTask(tag);
 
-                case "copy":
-                    return new CopyTask(tag);
+				case "read-line":
+					return new ReadLineTask(tag);
+
+				case "copy":
+					return new CopyTask(tag);
 
 				case "flatten":
 					return new FlattenTask(tag);

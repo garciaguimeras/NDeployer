@@ -13,6 +13,9 @@
 	<property name="DEPLOY.DIR.1">${DOCUMENTS.DIR}/X/TestDest</property>
 	<property name="DEPLOY.DIR.2">${DOCUMENTS.DIR}/X/TestDestFlatten</property>
 
+	<read-line name="VAR.NAME" text="Enter your name" />
+	<print text="Hello ${VAR.NAME}" />
+
 	<new-file name="${DOCUMENTS.DIR}/X/Test-${USERNAME}-${HOSTNAME}.txt">
 		<print text="User: ${USERNAME}" />
 		<print text="Host: ${HOSTNAME}" />
