@@ -12,6 +12,9 @@ namespace NDeployer.Tasks
         {
             switch (tag)
             {
+				case "meta-attr":
+					return new MetaAttributeTask(tag);
+
                 case "property":
                     return new PropertyTask(tag);
 

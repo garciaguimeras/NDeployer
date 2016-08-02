@@ -1,5 +1,8 @@
 ﻿<xml>
 
+	<meta-attr name="version">0.1</meta-attr>
+	<meta-attr name="doc">A simple build file for testing</meta-attr>
+
 	<property name="USERNAME">${ENV.USER}</property>
 	<property name="HOSTNAME">${ENV.HOST}</property>
 
@@ -38,7 +41,7 @@
 		<print text="" />
 
 		<with>
-			<change-relative-dir path="NavMenuDemoSkin" />
+			<change-relative-dir path="ng-test" />
 			<copy todir="${DEPLOY.DIR.1}">
 				<print text="Deploying to ${DEPLOY.DIR.1}" />
 				<print text="  == File: [[filename]]" />

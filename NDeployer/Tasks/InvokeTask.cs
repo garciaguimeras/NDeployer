@@ -4,14 +4,10 @@ using NDeployer.Script;
 
 namespace NDeployer.Tasks
 {
-	class FunctionTask : Task
+	class InvokeTask : Task
 	{
-
-		string functionName;
-
-		public FunctionTask(string name) : base(name)
+		public InvokeTask(string name) : base(name)
 		{
-			functionName = null;
 		}
 
 		public override bool ProcessTaskDef(TaskDef rootNode)

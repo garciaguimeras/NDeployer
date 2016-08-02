@@ -96,6 +96,10 @@
     <Compile Include="Script\FXmlFile.cs" />
     <Compile Include="Tasks\FunctionTask.cs" />
     <Compile Include="Tasks\ReadLineTask.cs" />
+    <Compile Include="Context.cs" />
+    <Compile Include="Tasks\InvokeTask.cs" />
+    <Compile Include="MetaAttribute.cs" />
+    <Compile Include="Tasks\MetaAttributeTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

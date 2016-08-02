@@ -14,12 +14,14 @@ namespace NDeployer.Tasks
 	{
 
 		TaskDef root;
+		List<Task> metaAttrTasks;
 		List<Task> propertyTasks;
 
 		public RootTask() : base("xml")
 		{
 			root = null;
 			propertyTasks = new List<Task>();
+			metaAttrTasks = new List<Task>();
 		}
 
 		public override bool ProcessTaskDef(TaskDef rootNode)
@@ -31,18 +33,39 @@ namespace NDeployer.Tasks
 				return false;
 			}
 
+			// Create meta-attributes
+			foreach (TaskDef element in root.TaskDefsByName("meta-attr"))
+			{
+				Task t = TaskFactory.CreateTaskForTag("meta-attr");
+				if (!t.ProcessTaskDef(element))
+				{
+					environment.Pipe.AddToErrorPipe("Meta attribute incorrectly defined. Must use attributes 'name' and 'value', or at least 'name'. Execution suspended.");
+					return false;
+				}
+				metaAttrTasks.Add(t);
+			}
+
+			// Create properties
 			foreach (TaskDef element in root.TaskDefsByName("property"))
 			{
 				Task t = TaskFactory.CreateTaskForTag("property");
 				if (!t.ProcessTaskDef(element))
 				{
-					environment.Pipe.AddToErrorPipe("Property incorrectly defined. Must use  attributes 'name' and 'value', or else 'filename'. Execution suspended.");
+					environment.Pipe.AddToErrorPipe("Property incorrectly defined. Must use attributes 'name' and 'value', or else 'filename'. Execution suspended.");
 					return false;
 				}
 				propertyTasks.Add(t);
 			}
 
 			return true;
+		}
+
+		public void LoadMetaAttributes()
+		{
+			foreach (Task t in metaAttrTasks)
+			{
+				t.Execute();
+			}			
 		}
 
 		public override void ExecuteGenerator()
@@ -57,7 +80,7 @@ namespace NDeployer.Tasks
 				}
 			}
 
-			IEnumerable<TaskDef> elements = root.TaskDefs.Where(t => !t.Name.Equals("property"));
+			IEnumerable<TaskDef> elements = root.TaskDefs.Where(t => !t.Name.Equals("property") && !t.Name.Equals("meta-attr"));
 			ExecuteContext(elements);
 		}
 

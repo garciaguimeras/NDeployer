@@ -1,18 +1,9 @@
-﻿using NDeployer.Tasks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+
+using NDeployer.Script;
 
 namespace NDeployer
 {
-
-    class PropertyItem
-    {
-        public string Name { get; set; }
-        public string Value { get; set; }
-        public string EvalValue { get; set; }
-    }
 
 	static class SystemEnvironmentProperties
 	{
@@ -33,11 +24,6 @@ namespace NDeployer
 
 	}
 
-	class Context
-	{
-		
-	}
-
     class Environment
     {
 		public const string HOSTNAME = "ENV.HOST";
@@ -45,12 +31,12 @@ namespace NDeployer
 
         private static Environment instance = null;
 
-        Dictionary<string, PropertyItem> properties;
-		Stack<Pipe> pipeStack;
-        Pipe pipe;
+		private Context context;
+		private MetaAttribute metaAttribute;
 
-        public Dictionary<string, PropertyItem> Properties { get { return properties;  } }
-        public Pipe Pipe { get { return pipe; } }
+        public Pipe Pipe { get { return context.Pipe; } }
+		public Dictionary<string, PropertyItem> Properties { get { return context.GetProperties();  } }
+		public Dictionary<string, string> MetaAttributes { get { return metaAttribute.MetaAttributes; } }
 
         public static Environment GetEnvironment()
         {
@@ -61,63 +47,87 @@ namespace NDeployer
 
         private Environment()
         {
-            properties = new Dictionary<string, PropertyItem>();
-			pipeStack = new Stack<Pipe>();
-            pipe = new Pipe();
-
+			context = new Context(null);
+			metaAttribute = new MetaAttribute();
 			FillSystemEnvironmentProperties();
         }
 
 		private void FillSystemEnvironmentProperties()
 		{
-			AddProperty(HOSTNAME, SystemEnvironmentProperties.HostName);
-			AddProperty(USERNAME, SystemEnvironmentProperties.UserName);
+			context.AddProperty(HOSTNAME, SystemEnvironmentProperties.HostName);
+			context.AddProperty(USERNAME, SystemEnvironmentProperties.UserName);
+		}
+
+		public void AddMetaAttribute(string key, string value)
+		{
+			metaAttribute.AddMetaAttribute(key, value);
+		}
+
+		public string GetMetaAttribute(string key)
+		{
+			return metaAttribute.GetMetaAttribute(key);
 		}
 
         public void AddProperty(string name, string value)
         {
-            properties.Add(name, new PropertyItem { Name = name, Value = value, EvalValue = null });
+			context.AddProperty(name, value);
         }
 
         public PropertyItem GetProperty(string name)
         {
-            try
-            {
-                return properties[name];
-            }
-            catch (KeyNotFoundException)
-            { }
-            return null;
+			return context.GetProperty(name);
         }
+
+		public void AddFunction(string name)
+		{
+			context.AddFunction(name);
+		}
+
+		public void AddFunctionParameter(string name, string paramName)
+		{
+			context.AddFunctionParameter(name, paramName);
+		}
+
+		public void AddFunctionTasks(string name, IEnumerable<TaskDef> tasks)
+		{
+			context.AddFunctionTasks(name, tasks);
+		}
+
+		public Function GetFunction(string name)
+		{
+			return context.GetFunction(name);
+		}
 
 		public void PushPipe()
 		{
-			if (pipe != null)
-				pipeStack.Push(pipe.Clone());
+			context.PushPipe();
 		}
 
 		public void PopPipe()
 		{
-			IEnumerable<Dictionary<string, string>> errorPipe = pipe.Error;
-
-			if (pipeStack.Count > 0)
-			{
-				pipe = pipeStack.Pop();
-				foreach (Dictionary<string, string> data in errorPipe)
-					pipe.AddToErrorPipe(data["error"]);
-			}
+			context.PopPipe();
 		}
 
 		public void NewPipe()
 		{
-			pipe = new Pipe();
+			context.NewPipe();
 		}
 
 		public void NewPipe(List<Dictionary<string, string>> stdData)
 		{
-			pipe = new Pipe();
-			foreach (Dictionary<string, string> item in stdData)
-				pipe.AddToStandardPipe(item);
+			context.NewPipe(stdData);
 		}
+
+		public void BeginContext()
+		{
+			Context newContext = new Context(context);
+			context = newContext;
+		}
+
+		public void EndContext()
+		{
+			context = context.Parent;
+		}
+
     }
 }

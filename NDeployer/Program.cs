@@ -16,8 +16,16 @@ namespace NDeployer
 		public string Copyright { get; set; }
 	}
 
+	enum ProgramFlag
+	{
+		EXECUTE,
+		INFO
+	}
+
     class Program
     {
+
+		const string LICENSE = "Released under GNU General Public License";
 
 		private ProgramInfo GetAssemblyInfo()
 		{
@@ -39,13 +47,27 @@ namespace NDeployer
 			Console.WriteLine("Usage: NDeployer [option]");
 			Console.WriteLine();
 			Console.WriteLine("Options:");
-			Console.WriteLine("    -f <build file>    Runs a build file");
-			Console.WriteLine("    -help              Prints this help");
-			Console.WriteLine("    -info              Prints app version and copyright information");
+			Console.WriteLine("    -f <build file> <flag>   Runs a build file");
+			Console.WriteLine("    -help                    Prints this help");
+			Console.WriteLine("    -info                    Prints app version and copyright information");
+			Console.WriteLine();
+			Console.WriteLine("Flags:");
+			Console.WriteLine("    -e                       Execute build file (by default)");
+			Console.WriteLine("    -i                       Print meta attributes defined on build file");
 			Console.WriteLine();
 		}
 
-		private void RunBuildFile(string filename)
+		private void PrintMetaAttributes()
+		{
+			Environment environment = Environment.GetEnvironment();
+			foreach (string k in environment.MetaAttributes.Keys)
+			{
+				Console.WriteLine("{0}: {1}", k, environment.MetaAttributes[k]);
+			}
+			Console.WriteLine();
+		}
+
+		private void RunBuildFile(string filename, ProgramFlag flag)
 		{
 			Environment environment = Environment.GetEnvironment();
 
@@ -75,6 +97,14 @@ namespace NDeployer
 				environment.Pipe.PrintErrorPipe();
 				return;
 			}
+
+			rootTask.LoadMetaAttributes();
+			if (flag == ProgramFlag.INFO)
+			{
+				PrintMetaAttributes();
+				return;
+			}
+
 			rootTask.Execute();
 		}
 
@@ -100,7 +130,22 @@ namespace NDeployer
 						PrintHelp();
 						return;
 					}
-					RunBuildFile(args[1]);
+
+					ProgramFlag flag = ProgramFlag.EXECUTE;
+					if (totalParams > 2)
+					{
+						switch (args[2])
+						{
+							case "-i":
+								flag = ProgramFlag.INFO;
+								break;
+							case "-e":
+								flag = ProgramFlag.EXECUTE;
+								break;
+						}
+					}
+
+					RunBuildFile(args[1], flag);
 					break;
 				
 				case "-help":
@@ -108,8 +153,9 @@ namespace NDeployer
 					break;
 
 				case "-info":
-					Console.WriteLine("Current version: {0}", programInfo.Version);
 					Console.WriteLine(programInfo.Copyright);
+					Console.WriteLine(LICENSE);
+					Console.WriteLine();
 					break;
 				
 				default:
