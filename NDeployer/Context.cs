@@ -12,7 +12,7 @@ namespace NDeployer
 		public string EvalValue { get; set; }
 	}
 
-	class Function
+	class FunctionInfo
 	{
 		string name;
 		Dictionary<string, PropertyItem> parameters;
@@ -22,7 +22,7 @@ namespace NDeployer
 		public Dictionary<string, PropertyItem> Parameters { get { return parameters; } }
 		public IEnumerable<TaskDef> Tasks { get { return tasks; } }
 
-		public Function(string functionName)
+		public FunctionInfo(string functionName)
 		{
 			name = functionName;
 			parameters = new Dictionary<string, PropertyItem>();
@@ -45,7 +45,7 @@ namespace NDeployer
 
 		Context parent;
 		Dictionary<string, PropertyItem> properties;
-		Dictionary<string, Function> functions;
+		Dictionary<string, FunctionInfo> functions;
 		Stack<Pipe> pipeStack;
 		Pipe pipe;
 
@@ -57,7 +57,7 @@ namespace NDeployer
 			this.parent = parent;
 
 			properties = new Dictionary<string, PropertyItem>();
-			functions = new Dictionary<string, Function>();
+			functions = new Dictionary<string, FunctionInfo>();
 			pipeStack = new Stack<Pipe>();
 			pipe = new Pipe();
 		}
@@ -80,7 +80,7 @@ namespace NDeployer
 
 		public void AddFunction(string name)
 		{
-			functions.Add(name, new Function(name));
+			functions.Add(name, new FunctionInfo(name));
 		}
 
 		public void AddFunctionParameter(string name, string paramName)
@@ -97,7 +97,7 @@ namespace NDeployer
 			functions[name].AddTaskDefs(tasks);
 		}
 
-		public Function GetFunction(string name)
+		public FunctionInfo GetFunction(string name)
 		{
 			if (functions.ContainsKey(name))
 				return functions[name];

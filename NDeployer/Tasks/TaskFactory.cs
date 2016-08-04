@@ -24,9 +24,6 @@ namespace NDeployer.Tasks
 				case "new-file":
 					return new NewFileTask(tag);
 
-				case "read-line":
-					return new ReadLineTask(tag);
-
 				case "copy":
 					return new CopyTask(tag);
 
@@ -56,6 +53,15 @@ namespace NDeployer.Tasks
 
 				case "print":
 					return new PrintTask(tag);
+
+				case "read-line":
+					return new ReadLineTask(tag);
+
+				case "function":
+					return new FunctionTask(tag);
+
+				case "invoke":
+					return new InvokeTask(tag);
             }
 
             return null;

@@ -134,5 +134,6 @@
     <None Include="Resources\noel-uqbar.properties" />
     <None Include="Resources\noel-Reykjavik.properties" />
     <None Include="Resources\NBuild.fxml" />
+    <None Include="Resources\NBuild2.fxml" />
   </ItemGroup>
 </Project>

@@ -93,7 +93,7 @@ namespace NDeployer
 			context.AddFunctionTasks(name, tasks);
 		}
 
-		public Function GetFunction(string name)
+		public FunctionInfo GetFunction(string name)
 		{
 			return context.GetFunction(name);
 		}

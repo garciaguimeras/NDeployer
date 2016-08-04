@@ -1,0 +1,22 @@
+﻿property name="DOCUMENTS.DIR" value="/home/noel/Documents"
+property name="SRC.DIR" value="${DOCUMENTS.DIR}/X/ng-test.zip"
+property name="DEPLOY.DIR.1" value="${DOCUMENTS.DIR}/X/TestDest"
+property name="DEPLOY.DIR.2" value="${DOCUMENTS.DIR}/X/TestDestFlatten"
+
+print text="Unzipping in flatten mode"
+
+unzip filename="${SRC.DIR}"
+{
+	flatten
+	filter exclude="*.js"
+	copy todir="${DEPLOY.DIR.2}"
+}
+
+print text="Unzipping in normal mode"
+
+unzip filename="${SRC.DIR}"
+{
+	copy todir="${DEPLOY.DIR.1}"
+}
+
+print text="Done!"
