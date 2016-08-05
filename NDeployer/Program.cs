@@ -44,17 +44,18 @@ namespace NDeployer
 
 		private void PrintHelp()
 		{
-			Console.WriteLine("Usage: NDeployer [option]");
+			Console.WriteLine("Usage: NDeployer [option] [arg-list]");
 			Console.WriteLine();
 			Console.WriteLine("Options:");
-			Console.WriteLine("    -f <build file> <flag>   Runs a build file");
+			Console.WriteLine("    -f <build file> [flag]   Runs a build file");
 			Console.WriteLine("    -help                    Prints this help");
 			Console.WriteLine("    -info                    Prints app version and copyright information");
 			Console.WriteLine();
 			Console.WriteLine("Flags:");
-			Console.WriteLine("    -e                       Execute build file (by default)");
 			Console.WriteLine("    -i                       Print meta attributes defined on build file");
 			Console.WriteLine();
+			Console.WriteLine("Argument List:");
+			Console.WriteLine("    arg-list                 A list of arguments separated by spaces");
 		}
 
 		private void PrintMetaAttributes()
@@ -67,7 +68,18 @@ namespace NDeployer
 			Console.WriteLine();
 		}
 
-		private void RunBuildFile(string filename, ProgramFlag flag)
+		private string[] GetBuildFileArgs(string[] args, int startingPos)
+		{
+			if (startingPos >= args.Length)
+				return new string[] { };
+
+			string[] copy = new string[args.Length - startingPos];
+			for (int i = startingPos; i < args.Length; i++)
+				copy[i - startingPos] = args[i];
+			return copy;
+		}
+
+		private void RunBuildFile(string filename, ProgramFlag flag, params string[] argList)
 		{
 			Environment environment = Environment.GetEnvironment();
 
@@ -105,6 +117,7 @@ namespace NDeployer
 				return;
 			}
 
+			rootTask.LoadArguments(argList);
 			rootTask.Execute();
 		}
 
@@ -139,13 +152,10 @@ namespace NDeployer
 							case "-i":
 								flag = ProgramFlag.INFO;
 								break;
-							case "-e":
-								flag = ProgramFlag.EXECUTE;
-								break;
 						}
 					}
 
-					RunBuildFile(args[1], flag);
+					RunBuildFile(args[1], flag, GetBuildFileArgs(args, 2));
 					break;
 				
 				case "-help":
@@ -159,7 +169,7 @@ namespace NDeployer
 					break;
 				
 				default:
-					Console.WriteLine("Error: Bad option '{0}'", option);
+					Console.WriteLine("Error: Unrecognized option '{0}'", option);
 					PrintHelp();
 					break;
 			}

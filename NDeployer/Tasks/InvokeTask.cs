@@ -38,7 +38,7 @@ namespace NDeployer.Tasks
 			FunctionInfo function = environment.GetFunction(functionName);
 			if (function == null)
 			{
-				environment.Pipe.AddToErrorPipe("Trying to invoke not existing function {0}. Execution suspended.", functionName);
+				environment.Pipe.AddToErrorPipe("Trying to invoke non-existing function {0}. Execution suspended.", functionName);
 				return;
 			}
 

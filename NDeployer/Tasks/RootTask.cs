@@ -68,6 +68,16 @@ namespace NDeployer.Tasks
 			}			
 		}
 
+		public void LoadArguments(string[] args)
+		{
+			environment.AddProperty("ARGS.LENGTH", args.Length.ToString());
+			for (int i = 0; i < args.Length; i++)
+			{
+				string argName = string.Format("ARGS.{0}", (i + 1).ToString());
+				environment.AddProperty(argName, args[i]);
+			}
+		}
+
 		public override void ExecuteGenerator()
 		{
 			foreach (Task t in propertyTasks)

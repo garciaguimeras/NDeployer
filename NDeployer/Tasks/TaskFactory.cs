@@ -48,6 +48,9 @@ namespace NDeployer.Tasks
 				case "with":
 					return new WithTask(tag);
 
+				case "zip":
+					return new ZipTask(tag);
+
 				case "unzip":
 					return new UnzipTask(tag);
 

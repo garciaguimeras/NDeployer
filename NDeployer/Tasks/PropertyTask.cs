@@ -14,12 +14,14 @@ namespace NDeployer.Tasks
 
         string name;
         string value;
+		string defValue;
 		string filename;
 
 		public PropertyTask(string name) : base(name)
         {
             name = null;
             value = null;
+			defValue = null;
 			filename = null;
         }
 
@@ -27,9 +29,10 @@ namespace NDeployer.Tasks
         {
             name = rootNode.AttributeByName("name");
 			value = rootNode.AttributeByName("value");
+			defValue = rootNode.AttributeByName("default");
 			filename = rootNode.AttributeByName("filename");
 
-			if (filename != null && name == null && value == null)
+			if (filename != null && name == null && value == null && defValue == null)
                 return true;
 			
 			if (filename == null && name != null && value != null)
@@ -43,7 +46,14 @@ namespace NDeployer.Tasks
 			environment.AddProperty(name, value);
 			bool result = PropertyEvaluator.EvalProperty(name);
 			if (!result)
-				environment.Pipe.AddToErrorPipe("Error evaluating property '{0}'. Execution suspended.", name);
+			{
+				if (defValue == null)
+					environment.Pipe.AddToErrorPipe("Error evaluating property '{0}'. Execution suspended.", name);
+				else
+				{
+					environment.AddProperty(name, defValue);
+				}
+			}
 		}
 
         public override void Execute()

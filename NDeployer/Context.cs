@@ -64,6 +64,8 @@ namespace NDeployer
 
 		public void AddProperty(string name, string value)
 		{
+			if (properties.ContainsKey(name))
+				properties.Remove(name);
 			properties.Add(name, new PropertyItem { Name = name, Value = value, EvalValue = null });
 		}
 
@@ -80,6 +82,8 @@ namespace NDeployer
 
 		public void AddFunction(string name)
 		{
+			if (functions.ContainsKey(name))
+				functions.Remove(name);
 			functions.Add(name, new FunctionInfo(name));
 		}
 

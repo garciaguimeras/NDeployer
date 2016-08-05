@@ -14,5 +14,12 @@ function name="zip"
 	print text="no digo ni ${pi}"
 }
 
-invoke name="unzip"
-invoke name="zip"
+function name="help"
+{
+	print text="Use 'zip' for zip task"
+	print text="or use 'unzip' for unzip task"
+	print text="and have fun!"
+}
+
+property name="defTask" value="${ARGS.1}" #default="help"
+invoke name="${defTask}"

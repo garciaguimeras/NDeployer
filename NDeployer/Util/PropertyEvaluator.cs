@@ -31,7 +31,7 @@ namespace NDeployer.Util
             return references;
         }
 
-        private static void CheckPendingProperties(PropertyItem item)
+        private static bool CheckPendingProperties(PropertyItem item)
         {
             int firstIndex = item.EvalValue.IndexOf("${");
             int lastIndex = item.EvalValue.IndexOf("}");
@@ -41,7 +41,9 @@ namespace NDeployer.Util
                 lastIndex = lastIndex == -1 ? item.EvalValue.Count() : lastIndex;
                 int length = lastIndex - firstIndex + 1;
                 Logger.warning("Property {0} could not be completely evaluated. There could be some missing values at '{1}'", item.Name, item.EvalValue.Substring(firstIndex, length));
+				return false;
             }
+			return true;
         }
 
         public static PropertyItem EvalPropertyItem(PropertyItem item, Stack<string> evalStack)
@@ -51,30 +53,28 @@ namespace NDeployer.Util
             item.EvalValue = item.Value;
             List<string> references = GetPropertyReferences(item.Value);
 
-            // No references, no need to eval
-            if (references.Count == 0)
-            {
-                // Check pending properties
-                CheckPendingProperties(item);
-                return item;
-            }
+            // References found, need to eval
+			if (references.Count > 0)
+			{
 
-            // Ok, let's start the recursive thing...
-            foreach (string key in references)
-            {
-                // Circular reference found!
-                if (evalStack.Contains(key))
-                    throw new PropertyEvaluatorException(string.Format("Could not evaluate property {0}. Circular reference found between properties {0} and {1}", item.Name, key));
+				// Ok, let's start the recursive thing...
+				foreach (string key in references)
+				{
+					// Circular reference found!
+					if (evalStack.Contains(key))
+						throw new PropertyEvaluatorException(string.Format("Could not evaluate property {0}. Circular reference found between properties {0} and {1}", item.Name, key));
 
-                evalStack.Push(item.Name);
-                PropertyItem pItem = EvalProperty(key, evalStack);
-                evalStack.Pop();
+					evalStack.Push(item.Name);
+					PropertyItem pItem = EvalProperty(key, evalStack);
+					evalStack.Pop();
 
-                item.EvalValue = item.EvalValue.Replace("${" + environment.Properties[key].Name + "}", pItem.EvalValue);
-            }
+					item.EvalValue = item.EvalValue.Replace("${" + environment.Properties[key].Name + "}", pItem.EvalValue);
+				}
+			}
 
             // Check pending properties
-            CheckPendingProperties(item);
+			if (!CheckPendingProperties(item))
+				return null;
 
 			// Fix directory separator
 			item.EvalValue = FileUtil.FixDirectorySeparator(item.EvalValue);
@@ -119,10 +119,7 @@ namespace NDeployer.Util
 			{
 				PropertyItem item = EvalProperty(key, new Stack<string>());
 				if (item == null)
-				{
-					environment.Pipe.AddToErrorPipe("Property {0} not found", item.Name);
 					return false;
-				}
 				// Logger.info("Property {0} = {1}", item.Name, item.EvalValue);
 			}
 			catch (PropertyEvaluatorException e)
