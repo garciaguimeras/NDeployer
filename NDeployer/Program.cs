@@ -61,9 +61,14 @@ namespace NDeployer
 		private void PrintMetaAttributes()
 		{
 			Environment environment = Environment.GetEnvironment();
-			foreach (string k in environment.MetaAttributes.Keys)
+			if (environment.MetaAttributes.Keys.Count == 0)
+				Console.WriteLine("No meta attributes found");
+			else
 			{
-				Console.WriteLine("{0}: {1}", k, environment.MetaAttributes[k]);
+				foreach (string k in environment.MetaAttributes.Keys)
+				{
+					Console.WriteLine("{0}: {1}", k, environment.MetaAttributes[k]);
+				}
 			}
 			Console.WriteLine();
 		}
@@ -102,22 +107,22 @@ namespace NDeployer
 				return;
 			}
 
-			RootTask rootTask = new RootTask();
-			rootTask.ProcessTaskDef(rootTaskDef);
+			RootTask rootTask = new RootTask(rootTaskDef, argList);
+			rootTask.IsValidTaskDef();
 			if (environment.Pipe.Error.Count() > 0)
 			{
 				environment.Pipe.PrintErrorPipe();
 				return;
 			}
-
-			rootTask.LoadMetaAttributes();
+				
 			if (flag == ProgramFlag.INFO)
 			{
+				rootTask.LoadMetaAttributes(rootTaskDef.Children);
 				PrintMetaAttributes();
 				return;
 			}
 
-			rootTask.LoadArguments(argList);
+			rootTask.LoadArguments();
 			rootTask.Execute();
 		}
 

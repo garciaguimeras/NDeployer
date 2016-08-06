@@ -12,25 +12,22 @@ using NDeployer.Util;
 namespace NDeployer.Tasks
 {
 
-    class ZipTask : Task
+    class ZipTask : ContextTask
     {
 
 		string zipFilename;
 		string toDir;
-		TaskDef root;
 
-		public ZipTask(string name) : base(name)
+		public ZipTask(TaskDef rootNode) : base(rootNode)
         {
 			zipFilename = null;
 			toDir = null;
-			root = null;
         }
 
-		public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
         {
-			root = rootNode;
-			zipFilename = GetAttribute(rootNode, "filename");
-			toDir = GetAttribute(rootNode, "toDir");
+			zipFilename = GetAttribute(RootNode, "filename");
+			toDir = GetAttribute(RootNode, "toDir");
 			if (zipFilename == null)
 			{
 				AddAttributeNotFoundError("filename");
@@ -132,10 +129,11 @@ namespace NDeployer.Tasks
 			FileUtil.DeleteDirectoryRecursively(tmpDir);
 
 			// Execute children tasks
-			environment.PushPipe();
-			environment.NewPipe(zipped);
-			ExecuteContext(root.TaskDefs);
-			environment.PopPipe();
+			environment.BeginContext(new Pipe(zipped));
+			LoadMetaAttributes(RootNode.Children);
+			LoadProperties(RootNode.Children);
+			ExecuteContext(RootNode.Children);
+			environment.EndContext();
         }
 
     }

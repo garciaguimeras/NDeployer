@@ -10,22 +10,19 @@ using NDeployer.Util;
 namespace NDeployer.Tasks
 {
 
-    class CopyTask : Task
+    class CopyTask : ContextTask
     {
 
         string deployDir;
-		TaskDef root;
 
-		public CopyTask(string name) : base(name)
+		public CopyTask(TaskDef taskDef) : base(taskDef)
         {
             deployDir = null;
-			root = null;
         }
 
-		public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
         {
-			root = rootNode;
-            deployDir = GetAttribute(rootNode, "todir");
+            deployDir = GetAttribute(RootNode, "todir");
 			if (deployDir == null)
 			{
 				AddAttributeNotFoundError("todir");
@@ -97,10 +94,11 @@ namespace NDeployer.Tasks
             }
 
 			// Execute children tasks
-			environment.PushPipe();
-			environment.NewPipe(copied);
-			ExecuteContext(root.TaskDefs);
-			environment.PopPipe();
+			environment.BeginContext(new Pipe(copied));
+			LoadMetaAttributes(RootNode.Children);
+			LoadProperties(RootNode.Children);
+			ExecuteContext(RootNode.Children);
+			environment.EndContext();
         }
 
     }

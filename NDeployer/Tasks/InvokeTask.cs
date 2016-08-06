@@ -5,19 +5,19 @@ using NDeployer.Util;
 
 namespace NDeployer.Tasks
 {
-	class InvokeTask : Task
+	class InvokeTask : ContextTask
 	{
 
 		string functionName;
 
-		public InvokeTask(string name) : base(name)
+		public InvokeTask(TaskDef rootNode) : base(rootNode)
 		{
 			functionName = null;
 		}
 
-		public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
 		{
-			functionName = GetAttribute(rootNode, "name");
+			functionName = GetAttribute(RootNode, "name");
 			if (functionName == null)
 			{
 				AddAttributeNotFoundError("name");
@@ -44,6 +44,8 @@ namespace NDeployer.Tasks
 
 			// Invoke function in a new context
 			environment.BeginContext();
+			LoadMetaAttributes(function.Tasks);
+ 			LoadProperties(function.Tasks);
 			ExecuteContext(function.Tasks);
 			environment.EndContext();
 		}

@@ -7,19 +7,16 @@ namespace NDeployer.Tasks
 	class FunctionTask : Task
 	{
 
-		TaskDef root;
 		string functionName;
 
-		public FunctionTask(string name) : base(name)
+		public FunctionTask(TaskDef rootNode) : base(rootNode)
 		{
-			root = null;
 			functionName = null;
 		}
 
-		public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
 		{
-			root = rootNode;
-			functionName = GetAttribute(rootNode, "name");
+			functionName = GetAttribute(RootNode, "name");
 			if (functionName == null)
 			{
 				AddAttributeNotFoundError("name");
@@ -34,7 +31,7 @@ namespace NDeployer.Tasks
 
 			// TODO: Add function parameters
 
-			environment.AddFunctionTasks(functionName, root.TaskDefs);
+			environment.AddFunctionTasks(functionName, RootNode.Children);
 		}
 	}
 }

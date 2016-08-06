@@ -15,16 +15,16 @@ namespace NDeployer.Tasks
 		string name;
 		string text;
 
-		public ReadLineTask(string name) : base(name)
+		public ReadLineTask(TaskDef rootNode) : base(rootNode)
 		{
 			name = null;
 			text = null;
 		}
 
-		public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
 		{
-			name = GetAttribute(rootNode, "name");
-			text = GetAttribute(rootNode, "text");
+			name = GetAttribute(RootNode, "name");
+			text = GetAttribute(RootNode, "text");
 			if (name == null)
 			{
 				AddAttributeNotFoundError("name");

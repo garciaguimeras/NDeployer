@@ -98,29 +98,15 @@ namespace NDeployer
 			return context.GetFunction(name);
 		}
 
-		public void PushPipe()
-		{
-			context.PushPipe();
-		}
-
-		public void PopPipe()
-		{
-			context.PopPipe();
-		}
-
-		public void NewPipe()
-		{
-			context.NewPipe();
-		}
-
-		public void NewPipe(List<Dictionary<string, string>> stdData)
-		{
-			context.NewPipe(stdData);
-		}
-
 		public void BeginContext()
 		{
 			Context newContext = new Context(context);
+			context = newContext;
+		}
+
+		public void BeginContext(Pipe initialPipe)
+		{
+			Context newContext = new Context(context, initialPipe);
 			context = newContext;
 		}
 

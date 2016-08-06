@@ -21,7 +21,7 @@ namespace NDeployer.Script
 				t.Name = e.Name;
 				foreach (string name in e.FXmlAttributes.Keys)
 					t.Attributes.Add(name, e.FXmlAttributes[name]);
-				t.TaskDefs = GetTaskDefs(e.Children);
+				t.Children = GetTaskDefs(e.Children);
 
 				tasks.Add(t);
 			}
@@ -58,8 +58,8 @@ namespace NDeployer.Script
 				return null;
 			}
 
-			TaskDef root = new TaskDef();
-			root.TaskDefs = GetTaskDefs(llParser.FXmlElements);
+			TaskDef root = TaskDef.Create("xml");
+			root.Children = GetTaskDefs(llParser.FXmlElements);
 			return root;
 		}
 

@@ -15,16 +15,16 @@ namespace NDeployer.Tasks
 		string include;
 		string exclude;
 
-		public FilterTask(string name) : base(name)
+		public FilterTask(TaskDef rootNode) : base(rootNode)
 		{
 			include = null;
 			exclude = null;
 		}
 
-		public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
 		{
-			include = GetAttribute(rootNode, "include");
-			exclude = GetAttribute(rootNode, "exclude");
+			include = GetAttribute(RootNode, "include");
+			exclude = GetAttribute(RootNode, "exclude");
 			if (include == null && exclude == null)
 			{
 				AddOneAttributeMandatoryError("include", "exclude");

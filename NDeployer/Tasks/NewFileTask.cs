@@ -9,21 +9,19 @@ using NDeployer.Util;
 
 namespace NDeployer.Tasks
 {
-	class NewFileTask : Task
+	class NewFileTask : ContextTask
 	{
 
 		string filename;
-		TaskDef root;
 
-		public NewFileTask(string name) : base(name)
+		public NewFileTask(TaskDef taskDef) : base(taskDef)
 		{
 			filename = null;
 		}
 
-		public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
 		{
-			root = rootNode;
-			filename = GetAttribute(rootNode, "name");
+			filename = GetAttribute(RootNode, "name");
 			if (filename == null)
 			{
 				AddAttributeNotFoundError("name");
@@ -42,9 +40,10 @@ namespace NDeployer.Tasks
 				return;
 			}
 
-			environment.PushPipe();
-			environment.NewPipe();
-			ExecuteContext(root.TaskDefs);
+			environment.BeginContext();
+			LoadMetaAttributes(RootNode.Children);
+			LoadProperties(RootNode.Children);
+			ExecuteContext(RootNode.Children);
 
 			using (StreamWriter writer = new StreamWriter(File.OpenWrite(filename)))
 			{
@@ -57,7 +56,7 @@ namespace NDeployer.Tasks
 				}
 			}
 
-			environment.PopPipe();
+			environment.EndContext();
 		}
 
 	}

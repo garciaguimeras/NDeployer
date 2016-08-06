@@ -14,17 +14,15 @@ namespace NDeployer.Tasks
     {
 
         string filename;
-		TaskDef root;
 
-		public FileTask(string name) : base(name)
+		public FileTask(TaskDef rootNode) : base(rootNode)
         {
             filename = null;
         }
 
-        public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
         {
-			root = rootNode;
-            filename = GetAttribute(rootNode, "name");
+            filename = GetAttribute(RootNode, "name");
 			if (filename == null)
 			{
 				AddAttributeNotFoundError("name");
@@ -78,7 +76,9 @@ namespace NDeployer.Tasks
                 ReadDirectory(filename);
 
 			// Execute tasks in context
-			ExecuteContext(root.TaskDefs);
+			LoadMetaAttributes(RootNode.Children);
+			LoadProperties(RootNode.Children);
+			ExecuteContext(RootNode.Children);
         }
 
     }

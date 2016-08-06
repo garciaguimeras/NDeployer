@@ -76,9 +76,6 @@
     <Compile Include="Tasks\FilterTask.cs" />
     <Compile Include="Util\WildcardExpressionEvaluator.cs" />
     <Compile Include="Util\PropertyEvaluator.cs" />
-    <Compile Include="Tasks\PushPipeTask.cs" />
-    <Compile Include="Tasks\PopPipeTask.cs" />
-    <Compile Include="Tasks\ClearPipeTask.cs" />
     <Compile Include="Tasks\CopyTask.cs" />
     <Compile Include="Tasks\RootTask.cs" />
     <Compile Include="Script\TaskDef.cs" />

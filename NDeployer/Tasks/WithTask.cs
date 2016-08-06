@@ -11,22 +11,21 @@ namespace NDeployer.Tasks
 	class WithTask : GeneratorTask
 	{
 
-		TaskDef root;
-
-		public WithTask(string name) : base(name)
+		public WithTask(TaskDef taskDef) : base(taskDef)
 		{
 			KeepContext = true;
 		}
 
-		public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
 		{
-			root = rootNode;
 			return true;
 		}
 
 		public override void ExecuteGenerator()
 		{
-			ExecuteContext(root.TaskDefs);
+			LoadMetaAttributes(RootNode.Children);
+			LoadProperties(RootNode.Children);
+			ExecuteContext(RootNode.Children);
 		}
 
 	}

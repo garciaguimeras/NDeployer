@@ -46,21 +46,22 @@ namespace NDeployer
 		Context parent;
 		Dictionary<string, PropertyItem> properties;
 		Dictionary<string, FunctionInfo> functions;
-		Stack<Pipe> pipeStack;
 		Pipe pipe;
 
 		public Context Parent { get { return parent; } }
 		public Pipe Pipe { get { return pipe; } }
 
-		public Context(Context parent)
+		public Context(Context parent, Pipe initialPipe)
 		{
 			this.parent = parent;
 
 			properties = new Dictionary<string, PropertyItem>();
 			functions = new Dictionary<string, FunctionInfo>();
-			pipeStack = new Stack<Pipe>();
-			pipe = new Pipe();
+			pipe = initialPipe;
 		}
+
+		public Context(Context parent) : this(parent, new Pipe())
+		{}
 
 		public void AddProperty(string name, string value)
 		{
@@ -110,37 +111,7 @@ namespace NDeployer
 				return parent.GetFunction(name);
 
 			return null;
-		}
-
-		public void PushPipe()
-		{
-			if (pipe != null)
-				pipeStack.Push(pipe.Clone());
-		}
-
-		public void PopPipe()
-		{
-			IEnumerable<Dictionary<string, string>> errorPipe = pipe.Error;
-
-			if (pipeStack.Count > 0)
-			{
-				pipe = pipeStack.Pop();
-				foreach (Dictionary<string, string> data in errorPipe)
-					pipe.AddToErrorPipe(data["error"]);
-			}
-		}
-
-		public void NewPipe()
-		{
-			pipe = new Pipe();
-		}
-
-		public void NewPipe(List<Dictionary<string, string>> stdData)
-		{
-			pipe = new Pipe();
-			foreach (Dictionary<string, string> item in stdData)
-				pipe.AddToStandardPipe(item);
-		}
+		}	
 
 		public Dictionary<string, PropertyItem> GetProperties()
 		{
@@ -149,7 +120,12 @@ namespace NDeployer
 			{
 				Dictionary<string, PropertyItem> parentProps = parent.GetProperties();
 				foreach (string key in parentProps.Keys)
-					fullProps.Add(key, parentProps[key]);
+				{
+					if (!fullProps.ContainsKey(key))
+						fullProps.Add(key, parentProps[key]);
+					else
+						fullProps[key] = parentProps[key];
+				}
 			}
 			return fullProps;
 		}

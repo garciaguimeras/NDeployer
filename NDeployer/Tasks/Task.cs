@@ -13,15 +13,17 @@ namespace NDeployer.Tasks
         protected Environment environment;
 
         public string Name { get; protected set; }
+		public TaskDef RootNode { get; protected set; }
 
-		public abstract bool ProcessTaskDef(TaskDef rootNode);
+		public abstract bool IsValidTaskDef();
 
         public abstract void Execute();
 
-        public Task(string name)
+		public Task(TaskDef rootNode)
         {
 			environment = Environment.GetEnvironment();
-			Name = name;
+			RootNode = rootNode;
+			Name = rootNode.Name;
         }
 
 		protected string GetAttribute(TaskDef rootNode, string attrName)
@@ -45,6 +47,38 @@ namespace NDeployer.Tasks
 			environment.Pipe.AddToErrorPipe("{0} - One of these attributes is mandatory: {1}", this.GetType().Name, text);
 		}
 
+    }
+
+	abstract class ContextTask : Task
+	{
+	
+		public ContextTask(TaskDef rootNode) : base(rootNode)
+		{}
+
+		public void LoadMetaAttributes(IEnumerable<TaskDef> children)
+		{
+			foreach (TaskDef element in children.Where(t => t.Name.Equals("meta-attr")))
+			{
+				Task t = TaskFactory.CreateTask(element);
+				if (!t.IsValidTaskDef())
+					environment.Pipe.AddToErrorPipe("Meta attribute incorrectly defined. Must use attributes 'name' and 'value', or at least 'name'. Execution suspended.");
+				else
+					t.Execute();
+			}
+		}
+
+		public void LoadProperties(IEnumerable<TaskDef> children)
+		{
+			foreach (TaskDef element in children.Where(t => t.Name.Equals("property")))
+			{
+				Task t = TaskFactory.CreateTask(element);
+				if (!t.IsValidTaskDef())
+					environment.Pipe.AddToErrorPipe("Property incorrectly defined. Must use attributes 'name' and 'value', or else 'filename'. Execution suspended.");
+				else
+					t.Execute();
+			}
+		}
+
 		protected void ExecuteContext(IEnumerable<TaskDef> children)
 		{
 			if (environment.Pipe.Error.Count() > 0)
@@ -53,17 +87,18 @@ namespace NDeployer.Tasks
 				return;
 			}
 
-			foreach (TaskDef child in children)
+			IEnumerable<TaskDef> elements = children.Where(t => !t.Name.Equals("property") && !t.Name.Equals("meta-attr"));
+			foreach (TaskDef child in elements)
 			{
 				string name = child.Name;
-				Task t = TaskFactory.CreateTaskForTag(name);
+				Task t = TaskFactory.CreateTask(child);
 				if (t == null)
 				{
 					environment.Pipe.AddToErrorPipe("Could not find any task for tag: {0}", name);
 					continue;
 				}
 
-				if (t.ProcessTaskDef(child))
+				if (t.IsValidTaskDef())
 				{
 					t.Execute();
 				}
@@ -76,27 +111,30 @@ namespace NDeployer.Tasks
 			}
 		}
 
-    }
+	}
 
-	abstract class GeneratorTask : Task
+	// TODO: Should inherit from ContextTask
+	abstract class GeneratorTask : ContextTask
 	{
 
 		protected bool KeepContext { get; set; }
 
 		public abstract void ExecuteGenerator();
 
-		public GeneratorTask(string name) : base(name)
+		public GeneratorTask(TaskDef rootNode) : base(rootNode)
 		{
 			KeepContext = false;
 		}
 
 		public override void Execute()
 		{
-			environment.PushPipe();
-			if (!KeepContext)
-				environment.NewPipe();
+			Pipe p = new Pipe();
+			if (KeepContext)
+				p = environment.Pipe.Clone();
+
+			environment.BeginContext(p);
 			ExecuteGenerator();
-			environment.PopPipe();
+			environment.EndContext();
 		}
 
 	}

@@ -39,7 +39,7 @@ namespace NDeployer.Script
 			{
 				TaskDefs.Add(GetTaskDef(child));
 			}
-			TaskDef.TaskDefs = TaskDefs;
+			TaskDef.Children = TaskDefs;
 
 			return TaskDef;
 		}

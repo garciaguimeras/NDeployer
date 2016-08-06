@@ -14,17 +14,15 @@ namespace NDeployer.Tasks
 	class UnzipTask : GeneratorTask
 	{
 		string filename;
-		TaskDef root;
 
-		public UnzipTask(string name) : base(name)
+		public UnzipTask(TaskDef rootNode) : base(rootNode)
 		{
 			filename = null;
 		}
 
-		public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
 		{
-			root = rootNode;
-			filename = GetAttribute(rootNode, "filename");
+			filename = GetAttribute(RootNode, "filename");
 			if (filename == null)
 			{
 				AddAttributeNotFoundError("filename");
@@ -111,7 +109,9 @@ namespace NDeployer.Tasks
 			string tmpDirName = UnzipFile(filename);
 
 			// Execute tasks in context
-			ExecuteContext(root.TaskDefs);
+			LoadMetaAttributes(RootNode.Children);
+			LoadProperties(RootNode.Children);
+			ExecuteContext(RootNode.Children);
 
 			// Remove temp directory
 			FileUtil.DeleteDirectoryRecursively(tmpDirName);

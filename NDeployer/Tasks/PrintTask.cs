@@ -15,14 +15,14 @@ namespace NDeployer.Tasks
 
 		string text;
 
-		public PrintTask(string name) : base(name)
+		public PrintTask(TaskDef rootNode) : base(rootNode)
 		{
 			text = null;
 		}
 
-		public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
 		{
-			text = GetAttribute(rootNode, "text");
+			text = GetAttribute(RootNode, "text");
 			if (text == null)
 			{
 				AddAttributeNotFoundError("text");

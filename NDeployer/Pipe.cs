@@ -25,6 +25,12 @@ namespace NDeployer
 			error = new List<Dictionary<string, string>>();
         }
 
+		public Pipe(List<Dictionary<string, string>> initialStd)
+		{
+			std = initialStd;
+			error = new List<Dictionary<string, string>>();
+		}
+
 		public Pipe Clone()
 		{
 			IFormatter formatter = new BinaryFormatter();

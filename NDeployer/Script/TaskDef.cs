@@ -9,13 +9,18 @@ namespace NDeployer.Script
 	{
 		public string Name { get; set; }
 		public Dictionary<string, string> Attributes { get; set; }
-		public List<TaskDef> TaskDefs { get; set; }
+		public List<TaskDef> Children { get; set; }
 
 		public TaskDef()
 		{
 			Name = "";
 			Attributes = new Dictionary<string, string>();
-			TaskDefs = new List<TaskDef>();
+			Children = new List<TaskDef>();
+		}
+
+		public static TaskDef Create(string name)
+		{
+			return new TaskDef { Name = name };
 		}
 
 		public string AttributeByName(string name)
@@ -25,10 +30,10 @@ namespace NDeployer.Script
 			return null;
 		}
 
-		public List<TaskDef> TaskDefsByName(string name)
+		public List<TaskDef> ChildrenByName(string name)
 		{
 			List<TaskDef> filtered = new List<TaskDef>();
-			foreach (TaskDef child in TaskDefs)
+			foreach (TaskDef child in Children)
 			{
 				if (child.Name.Equals(name))
 					filtered.Add(child);

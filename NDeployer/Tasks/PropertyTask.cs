@@ -17,7 +17,7 @@ namespace NDeployer.Tasks
 		string defValue;
 		string filename;
 
-		public PropertyTask(string name) : base(name)
+		public PropertyTask(TaskDef rootNode) : base(rootNode)
         {
             name = null;
             value = null;
@@ -25,12 +25,12 @@ namespace NDeployer.Tasks
 			filename = null;
         }
 
-        public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
         {
-            name = rootNode.AttributeByName("name");
-			value = rootNode.AttributeByName("value");
-			defValue = rootNode.AttributeByName("default");
-			filename = rootNode.AttributeByName("filename");
+            name = RootNode.AttributeByName("name");
+			value = RootNode.AttributeByName("value");
+			defValue = RootNode.AttributeByName("default");
+			filename = RootNode.AttributeByName("filename");
 
 			if (filename != null && name == null && value == null && defValue == null)
                 return true;

@@ -13,14 +13,14 @@ namespace NDeployer.Tasks
 
 		string path;
 
-		public ChangeRelativeDirTask(string name) : base(name)
+		public ChangeRelativeDirTask(TaskDef taskDef) : base(taskDef)
 		{
 			path = null;
 		}
 
-		public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
 		{
-			path = GetAttribute(rootNode, "path");
+			path = GetAttribute(RootNode, "path");
 			if (path == null)
 			{
 				AddAttributeNotFoundError("path");

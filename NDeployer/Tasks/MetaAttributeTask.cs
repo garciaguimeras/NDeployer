@@ -9,16 +9,16 @@ namespace NDeployer.Tasks
 		string name;
 		string value;
 
-		public MetaAttributeTask(string name) : base(name)
+		public MetaAttributeTask(TaskDef rootNode) : base(rootNode)
 		{
 			name = null;
 			value = null;
 		}
 
-		public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
 		{
-			name = rootNode.AttributeByName("name");
-			value = rootNode.AttributeByName("value");
+			name = RootNode.AttributeByName("name");
+			value = RootNode.AttributeByName("value");
 			if (name == null)
 				return false;
 			return true;

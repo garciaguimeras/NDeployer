@@ -11,10 +11,10 @@ namespace NDeployer.Tasks
 	class FlattenTask : Task
 	{
 		
-		public FlattenTask(string name) : base(name)
+		public FlattenTask(TaskDef rootNode) : base(rootNode)
 		{}
 
-		public override bool ProcessTaskDef(TaskDef rootNode)
+		public override bool IsValidTaskDef()
 		{
 			return true;
 		}

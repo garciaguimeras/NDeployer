@@ -3,68 +3,61 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using NDeployer.Script;
+
 namespace NDeployer.Tasks
 {
     class TaskFactory
     {
 
-        public static Task CreateTaskForTag(string tag)
+        public static Task CreateTask(TaskDef taskDef)
         {
-            switch (tag)
+            switch (taskDef.Name)
             {
 				case "meta-attr":
-					return new MetaAttributeTask(tag);
+					return new MetaAttributeTask(taskDef);
 
                 case "property":
-                    return new PropertyTask(tag);
+					return new PropertyTask(taskDef);
 
                 case "file":
-                    return new FileTask(tag);
+					return new FileTask(taskDef);
 
 				case "new-file":
-					return new NewFileTask(tag);
+					return new NewFileTask(taskDef);
 
 				case "copy":
-					return new CopyTask(tag);
+					return new CopyTask(taskDef);
 
 				case "flatten":
-					return new FlattenTask(tag);
+					return new FlattenTask(taskDef);
 
 				case "change-relative-dir":
-					return new ChangeRelativeDirTask(tag);
+					return new ChangeRelativeDirTask(taskDef);
 
 				case "filter":
-					return new FilterTask(tag);
-
-				case "push-pipe":
-					return new PushPipeTask(tag);
-
-				case "pop-pipe":
-					return new PopPipeTask(tag);
-
-				case "clear-pipe":
-					return new ClearPipeTask(tag);
+					return new FilterTask(taskDef);
 
 				case "with":
-					return new WithTask(tag);
+					return new WithTask(taskDef);
 
 				case "zip":
-					return new ZipTask(tag);
+					return new ZipTask(taskDef);
 
 				case "unzip":
-					return new UnzipTask(tag);
+					return new UnzipTask(taskDef);
 
 				case "print":
-					return new PrintTask(tag);
+					return new PrintTask(taskDef);
 
 				case "read-line":
-					return new ReadLineTask(tag);
+					return new ReadLineTask(taskDef);
 
 				case "function":
-					return new FunctionTask(tag);
+					return new FunctionTask(taskDef);
 
 				case "invoke":
-					return new InvokeTask(tag);
+					return new InvokeTask(taskDef);
             }
 
             return null;
