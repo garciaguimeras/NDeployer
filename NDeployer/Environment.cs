@@ -32,11 +32,11 @@ namespace NDeployer
         private static Environment instance = null;
 
 		private Context context;
-		private MetaAttribute metaAttribute;
 
         public Pipe Pipe { get { return context.Pipe; } }
 		public Dictionary<string, PropertyItem> Properties { get { return context.GetProperties();  } }
-		public Dictionary<string, string> MetaAttributes { get { return metaAttribute.MetaAttributes; } }
+		public Dictionary<string, string> MetaAttributes { get { return context.GetMetaAttributes(); } }
+		public Dictionary<string, FunctionInfo> Functions { get { return context.GetFunctions(); } }
 
         public static Environment GetEnvironment()
         {
@@ -48,7 +48,6 @@ namespace NDeployer
         private Environment()
         {
 			context = new Context(null);
-			metaAttribute = new MetaAttribute();
 			FillSystemEnvironmentProperties();
         }
 
@@ -60,12 +59,12 @@ namespace NDeployer
 
 		public void AddMetaAttribute(string key, string value)
 		{
-			metaAttribute.AddMetaAttribute(key, value);
+			context.AddMetaAttribute(key, value);
 		}
 
 		public string GetMetaAttribute(string key)
 		{
-			return metaAttribute.GetMetaAttribute(key);
+			return context.GetMetaAttribute(key);
 		}
 
         public void AddProperty(string name, string value)

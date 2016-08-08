@@ -3,9 +3,21 @@ property name="SRC.DIR" value="${DOCUMENTS.DIR}/X/ng-test"
 
 print text="Zipping in flatten mode"
 
-file name="${SRC.DIR}"
+
+#file name="${SRC.DIR}"
+#{
+#	zip filename="${DOCUMENTS.DIR}/X/test.zip" toDir="ng-test"
+#}
+
+function name="author" {}
+
+ifdef name="author" type="function"
 {
-	zip filename="${DOCUMENTS.DIR}/X/test.zip" toDir="ng-test"
+	print text="defined"
+}
+ifndef name="author" type="function"
+{
+	print text="not defined"
 }
 
 print text="Done!"

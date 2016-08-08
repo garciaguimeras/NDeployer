@@ -95,9 +95,9 @@
     <Compile Include="Tasks\ReadLineTask.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Tasks\InvokeTask.cs" />
-    <Compile Include="MetaAttribute.cs" />
     <Compile Include="Tasks\MetaAttributeTask.cs" />
     <Compile Include="Tasks\ZipTask.cs" />
+    <Compile Include="Tasks\IfDefTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

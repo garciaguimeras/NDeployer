@@ -37,6 +37,11 @@ namespace NDeployer.Tasks
 			environment.Pipe.AddToErrorPipe("{0} - Not found attribute: {1}", this.GetType().Name, attrName);
 		}
 
+		protected void InvalidAttributeValueError(string attrName, string attrValue)
+		{
+			environment.Pipe.AddToErrorPipe("{0} - Invalid attribute value. Attribute: {1}, Value: {2}", this.GetType().Name, attrName, attrValue);
+		}
+
 		protected void AddOneAttributeMandatoryError(params string[] attrNames)
 		{
 			string text = "";
@@ -113,24 +118,39 @@ namespace NDeployer.Tasks
 
 	}
 
-	// TODO: Should inherit from ContextTask
+	enum ContextStrategy
+	{
+		NEW,
+		KEEP,
+		CLONE
+	}
+
 	abstract class GeneratorTask : ContextTask
 	{
 
-		protected bool KeepContext { get; set; }
+		protected ContextStrategy ContextStrategy { get; set; }
 
 		public abstract void ExecuteGenerator();
 
 		public GeneratorTask(TaskDef rootNode) : base(rootNode)
 		{
-			KeepContext = false;
+			ContextStrategy = ContextStrategy.NEW;
 		}
 
 		public override void Execute()
 		{
+			// ContextStrategy.NEW
 			Pipe p = new Pipe();
-			if (KeepContext)
-				p = environment.Pipe.Clone();
+
+			switch (ContextStrategy)
+			{
+				case ContextStrategy.KEEP:
+					p = environment.Pipe;
+					break;
+				case ContextStrategy.CLONE:
+					p = environment.Pipe.Clone();
+					break;
+			}
 
 			environment.BeginContext(p);
 			ExecuteGenerator();

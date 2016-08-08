@@ -58,6 +58,12 @@ namespace NDeployer.Tasks
 
 				case "invoke":
 					return new InvokeTask(taskDef);
+
+				case "ifdef":
+					return new IfDefTask(taskDef);
+
+				case "ifndef":
+					return new IfNotDefTask(taskDef);
             }
 
             return null;

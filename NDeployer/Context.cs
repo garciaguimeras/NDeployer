@@ -46,6 +46,7 @@ namespace NDeployer
 		Context parent;
 		Dictionary<string, PropertyItem> properties;
 		Dictionary<string, FunctionInfo> functions;
+		Dictionary<string, string> metaAttributes;
 		Pipe pipe;
 
 		public Context Parent { get { return parent; } }
@@ -57,11 +58,30 @@ namespace NDeployer
 
 			properties = new Dictionary<string, PropertyItem>();
 			functions = new Dictionary<string, FunctionInfo>();
+			metaAttributes = new Dictionary<string, string>();
 			pipe = initialPipe;
 		}
 
 		public Context(Context parent) : this(parent, new Pipe())
 		{}
+
+		public void AddMetaAttribute(string name, string value)
+		{
+			if (metaAttributes.ContainsKey(name))
+				metaAttributes.Remove(name);
+			metaAttributes.Add(name, value);
+		}
+
+		public string GetMetaAttribute(string name)
+		{
+			if (metaAttributes.ContainsKey(name))
+				return metaAttributes[name];
+
+			if (parent != null)
+				return parent.GetMetaAttribute(name);
+
+			return null;
+		}
 
 		public void AddProperty(string name, string value)
 		{
@@ -128,6 +148,40 @@ namespace NDeployer
 				}
 			}
 			return fullProps;
+		}
+
+		public Dictionary<string, string> GetMetaAttributes()
+		{
+			Dictionary<string, string> fullMetaAttrs = new Dictionary<string, string>(metaAttributes);
+			if (parent != null)
+			{
+				Dictionary<string, string> parentMetaAttrs = parent.GetMetaAttributes();
+				foreach (string key in parentMetaAttrs.Keys)
+				{
+					if (!fullMetaAttrs.ContainsKey(key))
+						fullMetaAttrs.Add(key, parentMetaAttrs[key]);
+					else
+						fullMetaAttrs[key] = parentMetaAttrs[key];
+				}
+			}
+			return fullMetaAttrs;
+		}
+
+		public Dictionary<string, FunctionInfo> GetFunctions()
+		{
+			Dictionary<string, FunctionInfo> fullFunctions = new Dictionary<string, FunctionInfo>(functions);
+			if (parent != null)
+			{
+				Dictionary<string, FunctionInfo> parentFunctions = parent.GetFunctions();
+				foreach (string key in parentFunctions.Keys)
+				{
+					if (!fullFunctions.ContainsKey(key))
+						fullFunctions.Add(key, parentFunctions[key]);
+					else
+						fullFunctions[key] = parentFunctions[key];
+				}
+			}
+			return fullFunctions;
 		}
 
 	}
