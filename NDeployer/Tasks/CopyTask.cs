@@ -36,7 +36,7 @@ namespace NDeployer.Tasks
             deployDir = PropertyEvaluator.EvalValue(deployDir);
             if (deployDir == null)
             {
-                environment.Pipe.AddToErrorPipe("Error evaluating attributes. Execution suspended.");
+                environment.AddToErrorList("Error evaluating attributes. Execution suspended.");
                 return;
             }
             
@@ -55,7 +55,7 @@ namespace NDeployer.Tasks
 				if (!data.ContainsKey("filename") || !File.Exists(data["filename"])) 
 				{
 					string name = data.ContainsKey("filename") ? data["filename"] : "";
-					environment.Pipe.AddToErrorPipe("Filename does not exist: {0}", name);
+					environment.AddToErrorList("Filename does not exist: {0}", name);
 					continue;
 				}
 

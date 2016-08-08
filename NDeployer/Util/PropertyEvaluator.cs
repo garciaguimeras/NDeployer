@@ -124,7 +124,7 @@ namespace NDeployer.Util
 			}
 			catch (PropertyEvaluatorException e)
 			{
-				environment.Pipe.AddToErrorPipe(e.Message);
+				environment.AddToErrorList(e.Message);
 				return false;
 			}
 
@@ -143,7 +143,7 @@ namespace NDeployer.Util
             }
             catch (PropertyEvaluatorException e)
             {
-                environment.Pipe.AddToErrorPipe(e.Message);
+                environment.AddToErrorList(e.Message);
             }
             return null;
         }

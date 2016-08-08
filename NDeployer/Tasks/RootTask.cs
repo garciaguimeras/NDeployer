@@ -24,7 +24,7 @@ namespace NDeployer.Tasks
 		{
 			if (RootNode == null)
 			{
-				environment.Pipe.AddToErrorPipe("Invalid build file. Can't find document root");
+				environment.AddToErrorList("Invalid build file. Can't find document root");
 				return false;
 			}
 			return true;

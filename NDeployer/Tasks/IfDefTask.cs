@@ -69,7 +69,7 @@ namespace NDeployer.Tasks
 			name = PropertyEvaluator.EvalValue(name);
 			if (name == null)
 			{
-				environment.Pipe.AddToErrorPipe("Error evaluating attributes. Execution suspended.");
+				environment.AddToErrorList("Error evaluating attributes. Execution suspended.");
 				return;
 			}
 

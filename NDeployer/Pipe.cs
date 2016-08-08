@@ -14,21 +14,17 @@ namespace NDeployer
     {
 
 		List<Dictionary<string, string>> std;
-		List<Dictionary<string, string>> error;
 
-		public IEnumerable<Dictionary<string, string>> Std { get { return std.AsEnumerable(); } }
-		public IEnumerable<Dictionary<string, string>> Error { get { return error.AsEnumerable(); } }
+		public List<Dictionary<string, string>> Std { get { return std; } }
 
         public Pipe()
         {
 			std = new List<Dictionary<string, string>>();
-			error = new List<Dictionary<string, string>>();
         }
 
 		public Pipe(List<Dictionary<string, string>> initialStd)
 		{
 			std = initialStd;
-			error = new List<Dictionary<string, string>>();
 		}
 
 		public Pipe Clone()
@@ -63,28 +59,6 @@ namespace NDeployer
 				return included;
 			return notExcluded;
 		}
-
-		public void AddToErrorPipe(string text, params string[] extra)
-		{
-			Dictionary<string, string> data = new Dictionary<string, string> ();
-			try
-			{
-				text = string.Format(text, extra);
-			}
-			catch (Exception e)
-			{}
-			data.Add("error", text);
-			error.Add(data);
-		}
-
-        public void PrintErrorPipe()
-        {
-			foreach (Dictionary<string, string> data in Error)
-            {
-				if (data.ContainsKey("error"))
-					Logger.error(data["error"]);
-            }
-        }
 
     }
 }

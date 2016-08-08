@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using NDeployer.Script;
+using System;
 
 namespace NDeployer
 {
@@ -32,11 +33,13 @@ namespace NDeployer
         private static Environment instance = null;
 
 		private Context context;
+		private List<string> errors;
 
         public Pipe Pipe { get { return context.Pipe; } }
 		public Dictionary<string, PropertyItem> Properties { get { return context.GetProperties();  } }
 		public Dictionary<string, string> MetaAttributes { get { return context.GetMetaAttributes(); } }
 		public Dictionary<string, FunctionInfo> Functions { get { return context.GetFunctions(); } }
+		public List<string> Errors { get { return errors; } }
 
         public static Environment GetEnvironment()
         {
@@ -47,6 +50,7 @@ namespace NDeployer
 
         private Environment()
         {
+			errors = new List<string>();
 			context = new Context(null);
 			FillSystemEnvironmentProperties();
         }
@@ -55,6 +59,25 @@ namespace NDeployer
 		{
 			context.AddProperty(HOSTNAME, SystemEnvironmentProperties.HostName);
 			context.AddProperty(USERNAME, SystemEnvironmentProperties.UserName);
+		}
+
+		public void AddToErrorList(string text, params string[] extra)
+		{
+			try
+			{
+				text = string.Format(text, extra);
+			}
+			catch (Exception)
+			{}
+			errors.Add(text);
+		}
+
+		public void PrintErrorList()
+		{
+			foreach (string text in Errors)
+			{
+				Logger.error(text);
+			}
 		}
 
 		public void AddMetaAttribute(string key, string value)

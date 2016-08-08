@@ -56,14 +56,14 @@ namespace NDeployer.Tasks
 			filename = PropertyEvaluator.EvalValue(filename);
 			if (filename == null)
 			{
-				environment.Pipe.AddToErrorPipe("Error evaluating attributes. Execution suspended.");
+				environment.AddToErrorList("Error evaluating attributes. Execution suspended.");
 				return;
 			}
 
 			if (!File.Exists(filename) && !Directory.Exists(filename))
 			{
 				// Add an error :(
-				environment.Pipe.AddToErrorPipe("File or directory does not exist: {0}", filename);
+				environment.AddToErrorList("File or directory does not exist: {0}", filename);
 				return;
 			}
 

@@ -109,9 +109,9 @@ namespace NDeployer
 
 			RootTask rootTask = new RootTask(rootTaskDef, argList);
 			rootTask.IsValidTaskDef();
-			if (environment.Pipe.Error.Count() > 0)
+			if (environment.Errors.Count() > 0)
 			{
-				environment.Pipe.PrintErrorPipe();
+				environment.PrintErrorList();
 				return;
 			}
 				
@@ -124,6 +124,8 @@ namespace NDeployer
 
 			rootTask.LoadArguments();
 			rootTask.Execute();
+			if (environment.Errors.Count() > 0)
+				environment.PrintErrorList();
 		}
 
 		private void CheckOptions(string[] args, ProgramInfo programInfo)

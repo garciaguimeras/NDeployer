@@ -31,14 +31,14 @@ namespace NDeployer.Tasks
 			functionName = PropertyEvaluator.EvalValue(functionName);
 			if (functionName == null)
 			{
-				environment.Pipe.AddToErrorPipe("Error evaluating attributes. Execution suspended.");
+				environment.AddToErrorList("Error evaluating attributes. Execution suspended.");
 				return;
 			}
 
 			FunctionInfo function = environment.GetFunction(functionName);
 			if (function == null)
 			{
-				environment.Pipe.AddToErrorPipe("Trying to invoke non-existing function {0}. Execution suspended.", functionName);
+				environment.AddToErrorList("Trying to invoke non-existing function {0}. Execution suspended.", functionName);
 				return;
 			}
 

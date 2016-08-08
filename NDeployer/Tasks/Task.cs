@@ -34,12 +34,12 @@ namespace NDeployer.Tasks
 
 		protected void AddAttributeNotFoundError(string attrName)
 		{
-			environment.Pipe.AddToErrorPipe("{0} - Not found attribute: {1}", this.GetType().Name, attrName);
+			environment.AddToErrorList("{0} - Not found attribute: {1}", this.GetType().Name, attrName);
 		}
 
 		protected void InvalidAttributeValueError(string attrName, string attrValue)
 		{
-			environment.Pipe.AddToErrorPipe("{0} - Invalid attribute value. Attribute: {1}, Value: {2}", this.GetType().Name, attrName, attrValue);
+			environment.AddToErrorList("{0} - Invalid attribute value. Attribute: {1}, Value: {2}", this.GetType().Name, attrName, attrValue);
 		}
 
 		protected void AddOneAttributeMandatoryError(params string[] attrNames)
@@ -49,7 +49,7 @@ namespace NDeployer.Tasks
 				text = attrNames[0];
 			for (int i = 1; i < attrNames.Count(); i++)
 				text += ", " + attrNames[i];
-			environment.Pipe.AddToErrorPipe("{0} - One of these attributes is mandatory: {1}", this.GetType().Name, text);
+			environment.AddToErrorList("{0} - One of these attributes is mandatory: {1}", this.GetType().Name, text);
 		}
 
     }
@@ -66,7 +66,7 @@ namespace NDeployer.Tasks
 			{
 				Task t = TaskFactory.CreateTask(element);
 				if (!t.IsValidTaskDef())
-					environment.Pipe.AddToErrorPipe("Meta attribute incorrectly defined. Must use attributes 'name' and 'value', or at least 'name'. Execution suspended.");
+					environment.AddToErrorList("Meta attribute incorrectly defined. Must use attributes 'name' and 'value', or at least 'name'. Execution suspended.");
 				else
 					t.Execute();
 			}
@@ -78,7 +78,7 @@ namespace NDeployer.Tasks
 			{
 				Task t = TaskFactory.CreateTask(element);
 				if (!t.IsValidTaskDef())
-					environment.Pipe.AddToErrorPipe("Property incorrectly defined. Must use attributes 'name' and 'value', or else 'filename'. Execution suspended.");
+					environment.AddToErrorList("Property incorrectly defined. Must use attributes 'name' and 'value', or else 'filename'. Execution suspended.");
 				else
 					t.Execute();
 			}
@@ -86,11 +86,8 @@ namespace NDeployer.Tasks
 
 		protected void ExecuteContext(IEnumerable<TaskDef> children)
 		{
-			if (environment.Pipe.Error.Count() > 0)
-			{
-				environment.Pipe.PrintErrorPipe();
+			if (environment.Errors.Count() > 0)
 				return;
-			}
 
 			IEnumerable<TaskDef> elements = children.Where(t => !t.Name.Equals("property") && !t.Name.Equals("meta-attr"));
 			foreach (TaskDef child in elements)
@@ -99,7 +96,7 @@ namespace NDeployer.Tasks
 				Task t = TaskFactory.CreateTask(child);
 				if (t == null)
 				{
-					environment.Pipe.AddToErrorPipe("Could not find any task for tag: {0}", name);
+					environment.AddToErrorList("Could not find any task for tag: {0}", name);
 					continue;
 				}
 
@@ -108,11 +105,8 @@ namespace NDeployer.Tasks
 					t.Execute();
 				}
 
-				if (environment.Pipe.Error.Count() > 0)
-				{
-					environment.Pipe.PrintErrorPipe();
+				if (environment.Errors.Count() > 0)
 					return;
-				}
 			}
 		}
 
@@ -147,6 +141,7 @@ namespace NDeployer.Tasks
 				case ContextStrategy.KEEP:
 					p = environment.Pipe;
 					break;
+			    
 				case ContextStrategy.CLONE:
 					p = environment.Pipe.Clone();
 					break;

@@ -48,7 +48,7 @@ namespace NDeployer.Tasks
 			if (!result)
 			{
 				if (defValue == null)
-					environment.Pipe.AddToErrorPipe("Error evaluating property '{0}'. Execution suspended.", name);
+					environment.AddToErrorList("Error evaluating property '{0}'. Execution suspended.", name);
 				else
 				{
 					environment.AddProperty(name, defValue);
@@ -69,14 +69,14 @@ namespace NDeployer.Tasks
 			string fName = PropertyEvaluator.EvalValue(filename);
 			if (!File.Exists(fName))
 			{
-				environment.Pipe.AddToErrorPipe("Filename does not exist '{0}'. Execution suspended.", fName);
+				environment.AddToErrorList("Filename does not exist '{0}'. Execution suspended.", fName);
 				return;
 			}
 
 			Dictionary<string, string> properties = PropertyFileReader.Read(fName);
 			if (properties == null)
 			{
-				environment.Pipe.AddToErrorPipe("Error parsing properties file '{0}'. Execution suspended.", fName);
+				environment.AddToErrorList("Error parsing properties file '{0}'. Execution suspended.", fName);
 				return;
 			}
 
