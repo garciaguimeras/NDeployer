@@ -2,6 +2,7 @@
 
 using NDeployer.Script;
 using NDeployer.Tasks;
+using NDeployer.Util;
 
 namespace NDeployer.Tasks
 {
@@ -65,6 +66,13 @@ namespace NDeployer.Tasks
 
 		public override void ExecuteGenerator()
 		{
+			name = PropertyEvaluator.EvalValue(name);
+			if (name == null)
+			{
+				environment.Pipe.AddToErrorPipe("Error evaluating attributes. Execution suspended.");
+				return;
+			}
+
 			bool condition = CheckCondition();
 
 			if (condition)
