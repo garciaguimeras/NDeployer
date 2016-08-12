@@ -14,6 +14,7 @@ namespace NDeployer.Tasks
     {
 
         string deployDir;
+		string baseDir;
 
 		public CopyTask(TaskDef taskDef) : base(taskDef)
         {
@@ -23,6 +24,7 @@ namespace NDeployer.Tasks
 		public override bool IsValidTaskDef()
         {
             deployDir = GetAttribute(RootNode, "todir");
+			baseDir = GetAttribute(RootNode, "basedir");
 			if (deployDir == null)
 			{
 				AddAttributeNotFoundError("todir");
@@ -39,6 +41,12 @@ namespace NDeployer.Tasks
                 environment.AddToErrorList("Error evaluating attributes. Execution suspended.");
                 return;
             }
+
+			baseDir = baseDir != null ? PropertyEvaluator.EvalValue(baseDir) : "";
+			if (baseDir != null)
+				baseDir = FileUtil.FixDirectorySeparator(baseDir);
+			else
+				baseDir = "";
             
             // Logger.info("Deploying to directory: {0}", deployDir);
             if (!Directory.Exists(deployDir))
@@ -49,7 +57,7 @@ namespace NDeployer.Tasks
 
 			List<Dictionary<string, string>> copied = new List<Dictionary<string, string>>();
 
-			IEnumerable<Dictionary<string, string>> input = environment.Pipe.FilterStandardPipe("include", "exclude");
+			IEnumerable<Dictionary<string, string>> input = environment.Pipe.FilterStandardPipe("exclude");
 			foreach (Dictionary<string, string> data in input)
             {
 				if (!data.ContainsKey("filename") || !File.Exists(data["filename"])) 
@@ -62,20 +70,18 @@ namespace NDeployer.Tasks
 				string filename = data["filename"];
 
 				// Is flatten?
-				bool flatten = data.ContainsKey("flatten") && data["flatten"].Equals("");
+				bool flatten = data.ContainsKey("flatten");
 				string destDir = !flatten && data.ContainsKey("relativePath") ? data["relativePath"] : ".";
 				destDir = FileUtil.FixDirectorySeparator(destDir);
 
 				// Change relative dir?
-				string cd = data.ContainsKey("changeRelativeDir") ? data["changeRelativeDir"] : "";
-				cd = FileUtil.FixDirectorySeparator(cd);
-				if (destDir.Equals(cd))
+				if (destDir.Equals(baseDir))
 					destDir = "";
 				else
 				{
-					if (destDir.StartsWith(cd + Path.DirectorySeparatorChar))
+					if (destDir.StartsWith(baseDir + Path.DirectorySeparatorChar))
 					{
-						destDir = destDir.Substring(cd.Length + 1);
+						destDir = destDir.Substring(baseDir.Length + 1);
 					}
 				}
 

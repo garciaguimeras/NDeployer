@@ -1,0 +1,28 @@
+﻿@author Noel
+@version 1.0
+
+$pi 3.14
+
+function name="unzip"
+{
+	$txt1 function unzip invoked
+	print text="${txt1}"
+	print text="no hago ni ${pi}"
+}
+
+function name="zip"
+{
+	$txt2 function zip invoked
+	print text="${txt2}"
+	print text="no digo ni ${pi}"
+}
+
+function name="help"
+{
+	print text="Use 'zip' for zip task"
+	print text="or use 'unzip' for unzip task"
+	print text="and have fun!"
+}
+
+property name="defTask" value="${ARGS.1}" default="help"
+invoke name="${defTask}"

@@ -33,7 +33,7 @@ namespace NDeployer.Tasks
 			return true;
 		}
 
-		private bool NeedIncludeFlag(Dictionary<string, string> data)
+		private bool MatchInclude(Dictionary<string, string> data)
 		{
 			foreach (string key in data.Keys) 
 			{
@@ -43,7 +43,7 @@ namespace NDeployer.Tasks
 			return false;
 		}
 
-		private bool NeedExcludeFlag(Dictionary<string, string> data)
+		private bool MatchExclude(Dictionary<string, string> data)
 		{
 			foreach (string key in data.Keys) 
 			{
@@ -58,10 +58,30 @@ namespace NDeployer.Tasks
 			IEnumerable<Dictionary<string, string>> input = environment.Pipe.Std;
 			foreach (Dictionary<string, string> data in input) 
 			{
-				if (include != null && NeedIncludeFlag(data))
-					data.Add("include", "");
-				if (exclude != null && NeedExcludeFlag(data))
-					data.Add("exclude", "");					
+				if (include != null)
+				{
+					if (MatchInclude(data))
+					{
+						if (data.ContainsKey("exclude"))
+							data.Remove("exclude");
+						if (!data.ContainsKey("include"))
+							data.Add("include", "");
+					} 
+					else
+					{
+						if (!data.ContainsKey("exclude") && !data.ContainsKey("include"))
+							data.Add("exclude", "");
+					}
+				}
+
+				if (exclude != null)
+				{
+					if (MatchExclude(data))
+					{
+						if (!data.ContainsKey("exclude"))
+							data.Add("exclude", "");
+					}
+				}
 			}
 		}
 

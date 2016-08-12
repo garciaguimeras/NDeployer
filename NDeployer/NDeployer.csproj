@@ -88,7 +88,6 @@
     <Compile Include="Util\FileUtil.cs" />
     <Compile Include="Util\PropertyFileReader.cs" />
     <Compile Include="Tasks\PrintTask.cs" />
-    <Compile Include="Tasks\ChangeRelativeDirTask.cs" />
     <Compile Include="Tasks\NewFileTask.cs" />
     <Compile Include="Script\FXmlFile.cs" />
     <Compile Include="Tasks\FunctionTask.cs" />
@@ -131,7 +130,7 @@
   <ItemGroup>
     <None Include="Resources\noel-uqbar.properties" />
     <None Include="Resources\noel-Reykjavik.properties" />
+    <None Include="Resources\NBuild3.fxml" />
     <None Include="Resources\NBuild.fxml" />
-    <None Include="Resources\NBuild2.fxml" />
   </ItemGroup>
 </Project>

@@ -17,17 +17,20 @@ namespace NDeployer.Tasks
 
 		string zipFilename;
 		string toDir;
+		string baseDir;
 
 		public ZipTask(TaskDef rootNode) : base(rootNode)
         {
 			zipFilename = null;
 			toDir = null;
+			baseDir = null;
         }
 
 		public override bool IsValidTaskDef()
         {
 			zipFilename = GetAttribute(RootNode, "filename");
-			toDir = GetAttribute(RootNode, "toDir");
+			toDir = GetAttribute(RootNode, "todir");
+			baseDir = GetAttribute(RootNode, "basedir");
 			if (zipFilename == null)
 			{
 				AddAttributeNotFoundError("filename");
@@ -44,6 +47,7 @@ namespace NDeployer.Tasks
                 environment.AddToErrorList("Error evaluating attributes. Execution suspended.");
                 return;
             }
+
 			if (toDir != null)
 			{
 				toDir = PropertyEvaluator.EvalValue(toDir);
@@ -53,6 +57,12 @@ namespace NDeployer.Tasks
 					return;
 				}
 			}
+
+			baseDir = baseDir != null ? PropertyEvaluator.EvalValue(baseDir) : "";
+			if (baseDir != null)
+				baseDir = FileUtil.FixDirectorySeparator(baseDir);
+			else
+				baseDir = "";
             
 			string fileDir = Path.GetDirectoryName(zipFilename);
 			if (!Directory.Exists(fileDir))
@@ -75,7 +85,7 @@ namespace NDeployer.Tasks
 			List<Dictionary<string, string>> zipped = new List<Dictionary<string, string>>();
 
 			// Copy all files to tmp dir
-			IEnumerable<Dictionary<string, string>> input = environment.Pipe.FilterStandardPipe("include", "exclude");
+			IEnumerable<Dictionary<string, string>> input = environment.Pipe.FilterStandardPipe("exclude");
 			foreach (Dictionary<string, string> data in input)
             {
 				if (!data.ContainsKey("filename") || !File.Exists(data["filename"])) 
@@ -88,20 +98,18 @@ namespace NDeployer.Tasks
 				string filename = data["filename"];
 
 				// Is flatten?
-				bool flatten = data.ContainsKey("flatten") && data["flatten"].Equals("");
+				bool flatten = data.ContainsKey("flatten");
 				string relativeDir = !flatten && data.ContainsKey("relativePath") ? data["relativePath"] : ".";
 				relativeDir = FileUtil.FixDirectorySeparator(relativeDir);
 
 				// Change relative dir?
-				string cd = data.ContainsKey("changeRelativeDir") ? data["changeRelativeDir"] : "";
-				cd = FileUtil.FixDirectorySeparator(cd);
-				if (relativeDir.Equals(cd))
+				if (relativeDir.Equals(baseDir))
 					relativeDir = "";
 				else
 				{
-					if (relativeDir.StartsWith(cd + Path.DirectorySeparatorChar))
+					if (relativeDir.StartsWith(baseDir + Path.DirectorySeparatorChar))
 					{
-						relativeDir = relativeDir.Substring(cd.Length + 1);
+						relativeDir = relativeDir.Substring(baseDir.Length + 1);
 					}
 				}
 

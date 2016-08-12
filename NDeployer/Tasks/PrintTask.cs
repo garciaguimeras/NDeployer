@@ -96,7 +96,7 @@ namespace NDeployer.Tasks
 
 			List<string> textList = new List<string>();
 
-			IEnumerable<Dictionary<string, string>> input = environment.Pipe.FilterStandardPipe("include", "exclude");
+			IEnumerable<Dictionary<string, string>> input = environment.Pipe.FilterStandardPipe("exclude");
 			foreach (Dictionary<string, string> data in input)
 			{
 				Dictionary<string, string> eval = EvaluateReferences(references, data);

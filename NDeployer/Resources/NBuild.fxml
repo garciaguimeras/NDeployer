@@ -1,28 +1,29 @@
-﻿@author Noel
-@version 1.0
+﻿property name="DOCUMENTS.DIR" value="/home/noel/Documents"
+property name="SRC.FILE" value="${DOCUMENTS.DIR}/test.zip"
 
-$pi 3.14
+print text="Zipping in flatten mode"
+
 
 function name="unzip"
 {
-	$txt1 function unzip invoked
-	print text="${txt1}"
-	print text="no hago ni ${pi}"
+	unzip filename="${SRC.FILE}"
+	{
+		print text="Unzipping file"
+		copy todir="${DOCUMENTS.DIR}" basedir="Downloads"
+	}
 }
 
-function name="zip"
+function name="author" {}
+
+ifdef name="author" type="function"
 {
-	$txt2 function zip invoked
-	print text="${txt2}"
-	print text="no digo ni ${pi}"
+	print text="defined"
 }
-
-function name="help"
+ifndef name="author" type="function"
 {
-	print text="Use 'zip' for zip task"
-	print text="or use 'unzip' for unzip task"
-	print text="and have fun!"
+	print text="not defined"
 }
 
-property name="defTask" value="${ARGS.1}" default="help"
-invoke name="${defTask}"
+invoke name="unzip"
+
+print text="Done!"

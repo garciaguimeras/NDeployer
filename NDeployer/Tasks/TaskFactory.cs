@@ -32,9 +32,6 @@ namespace NDeployer.Tasks
 				case "flatten":
 					return new FlattenTask(taskDef);
 
-				case "change-relative-dir":
-					return new ChangeRelativeDirTask(taskDef);
-
 				case "filter":
 					return new FilterTask(taskDef);
 
