@@ -5,6 +5,8 @@ using System.Text;
 using System.Xml.Linq;
 using System.IO;
 
+using NDeployer.Lang;
+
 namespace NDeployer.Script
 {
 	class XmlFile : ScriptFile
@@ -19,10 +21,12 @@ namespace NDeployer.Script
 			return elements.First();
 		}
 
-		public override TaskDef Parse(string filename)
+		public override ModuleInfo Parse(string filename)
 		{
+			string moduleName = Path.GetFileNameWithoutExtension(filename);
 			XElement root = GetDocumentRoot(filename);
-			return XmlFileParser.GetRootTaskDef(root);
+			TaskDef rootTask = XmlFileParser.GetRootTaskDef(root);
+			return new ModuleInfo(moduleName, rootTask);
 		}
 	}
 }

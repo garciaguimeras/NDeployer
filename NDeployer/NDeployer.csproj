@@ -99,6 +99,8 @@
     <Compile Include="Tasks\IfDefTask.cs" />
     <Compile Include="Util\ScriptLoader.cs" />
     <Compile Include="Tasks\ImportTask.cs" />
+    <Compile Include="Lang\FunctionInfo.cs" />
+    <Compile Include="Lang\ModuleInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -128,6 +130,7 @@
   <ItemGroup>
     <Folder Include="Util\" />
     <Folder Include="Script\" />
+    <Folder Include="Lang\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\noel-uqbar.properties" />

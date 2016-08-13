@@ -1,5 +1,6 @@
 ﻿using System;
 
+using NDeployer.Lang;
 using NDeployer.Script;
 using NDeployer.Util;
 

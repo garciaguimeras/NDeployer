@@ -7,6 +7,8 @@ using System.IO;
 
 using FlatXml.FXml;
 
+using NDeployer.Lang;
+
 namespace NDeployer.Script
 {
 	class FXmlFile : ScriptFile
@@ -28,7 +30,7 @@ namespace NDeployer.Script
 			return tasks;
 		}
 
-		public override TaskDef Parse(string filename)
+		public override ModuleInfo Parse(string filename)
 		{
 			List<string> lines =  new List<string>();
 
@@ -60,7 +62,9 @@ namespace NDeployer.Script
 
 			TaskDef root = TaskDef.Create("xml");
 			root.Children = GetTaskDefs(llParser.FXmlElements);
-			return root;
+
+			string moduleName = Path.GetFileNameWithoutExtension(filename);
+			return new ModuleInfo(moduleName, root);
 		}
 
 	}

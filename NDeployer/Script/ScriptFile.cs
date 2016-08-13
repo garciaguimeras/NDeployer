@@ -1,10 +1,10 @@
-﻿using System;
+﻿using NDeployer.Lang;
 
 namespace NDeployer.Script
 {
 	abstract class ScriptFile
 	{
-		public abstract TaskDef Parse(string filename);
+		public abstract ModuleInfo Parse(string filename);
 	}
 }
 
