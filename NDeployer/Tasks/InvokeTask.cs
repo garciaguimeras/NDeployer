@@ -31,7 +31,7 @@ namespace NDeployer.Tasks
 			functionName = PropertyEvaluator.EvalValue(functionName);
 			if (functionName == null)
 			{
-				environment.AddToErrorList("Error evaluating attributes. Execution suspended.");
+				AddErrorEvaluatingAttribute("name");
 				return;
 			}
 

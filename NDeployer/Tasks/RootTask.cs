@@ -49,6 +49,7 @@ namespace NDeployer.Tasks
 		public override void ExecuteGenerator()
 		{
 			LoadMetaAttributes(RootNode.Children);
+			LoadImports(RootNode.Children);
 			LoadArguments();
 			LoadProperties(RootNode.Children);
 			ExecuteContext(RootNode.Children);

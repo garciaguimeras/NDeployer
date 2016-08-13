@@ -1,0 +1,2 @@
+﻿print text="Dependency loaded"
+print text="Dependency loaded 2"

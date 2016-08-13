@@ -55,7 +55,7 @@ namespace NDeployer.Tasks
 
 			if (type == IfDefType.none)
 			{
-				InvalidAttributeValueError("type", t);
+				AddInvalidAttributeValueError("type", t);
 				return false;
 			}
 
@@ -69,7 +69,7 @@ namespace NDeployer.Tasks
 			name = PropertyEvaluator.EvalValue(name);
 			if (name == null)
 			{
-				environment.AddToErrorList("Error evaluating attributes. Execution suspended.");
+				AddErrorEvaluatingAttribute("name");
 				return;
 			}
 

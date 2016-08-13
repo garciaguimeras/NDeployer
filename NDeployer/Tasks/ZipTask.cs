@@ -44,7 +44,7 @@ namespace NDeployer.Tasks
 			zipFilename = PropertyEvaluator.EvalValue(zipFilename);
 			if (zipFilename == null)
             {
-                environment.AddToErrorList("Error evaluating attributes. Execution suspended.");
+				AddErrorEvaluatingAttribute("filename");
                 return;
             }
 
@@ -53,7 +53,7 @@ namespace NDeployer.Tasks
 				toDir = PropertyEvaluator.EvalValue(toDir);
 				if (toDir == null)
 				{
-					environment.AddToErrorList("Error evaluating attributes. Execution suspended.");
+					AddErrorEvaluatingAttribute("todir");
 					return;
 				}
 			}

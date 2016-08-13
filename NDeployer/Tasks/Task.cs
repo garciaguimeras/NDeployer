@@ -37,9 +37,14 @@ namespace NDeployer.Tasks
 			environment.AddToErrorList("{0} - Not found attribute: {1}", this.GetType().Name, attrName);
 		}
 
-		protected void InvalidAttributeValueError(string attrName, string attrValue)
+		protected void AddInvalidAttributeValueError(string attrName, string attrValue)
 		{
 			environment.AddToErrorList("{0} - Invalid attribute value. Attribute: {1}, Value: {2}", this.GetType().Name, attrName, attrValue);
+		}
+
+		protected void AddErrorEvaluatingAttribute(string attrName)
+		{
+			environment.AddToErrorList("{0} - Error evaluating attribute: {1}", this.GetType().Name, attrName);
 		}
 
 		protected void AddOneAttributeMandatoryError(params string[] attrNames)
@@ -59,6 +64,18 @@ namespace NDeployer.Tasks
 	
 		public ContextTask(TaskDef rootNode) : base(rootNode)
 		{}
+
+		public void LoadImports(IEnumerable<TaskDef> children)
+		{
+			foreach (TaskDef element in children.Where(t => t.Name.Equals("import")))
+			{
+				Task t = TaskFactory.CreateTask(element);
+				if (!t.IsValidTaskDef())
+					environment.AddToErrorList("Could not import dependency. Execution suspended.");
+				else
+					t.Execute();
+			}
+		}
 
 		public void LoadMetaAttributes(IEnumerable<TaskDef> children)
 		{
@@ -89,7 +106,7 @@ namespace NDeployer.Tasks
 			if (environment.Errors.Count() > 0)
 				return;
 
-			IEnumerable<TaskDef> elements = children.Where(t => !t.Name.Equals("property") && !t.Name.Equals("meta-attr"));
+			IEnumerable<TaskDef> elements = children.Where(t => !t.Name.Equals("property") && !t.Name.Equals("meta-attr") && !t.Name.Equals("import"));
 			foreach (TaskDef child in elements)
 			{
 				string name = child.Name;

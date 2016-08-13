@@ -20,6 +20,9 @@ namespace NDeployer.Tasks
                 case "property":
 					return new PropertyTask(taskDef);
 
+				case "import":
+					return new ImportTask(taskDef);
+
                 case "file":
 					return new FileTask(taskDef);
 

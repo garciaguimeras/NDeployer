@@ -1,8 +1,7 @@
-﻿property name="DOCUMENTS.DIR" value="/home/noel/Documents/X"
+﻿import filename="Resources/NBuildDep.fxml"
+
+property name="DOCUMENTS.DIR" value="/home/noel/Documents/X"
 property name="SRC.FILE" value="${DOCUMENTS.DIR}/test.zip"
-
-print text="Zipping in flatten mode"
-
 
 function name="unzip"
 {

@@ -38,7 +38,7 @@ namespace NDeployer.Tasks
             deployDir = PropertyEvaluator.EvalValue(deployDir);
             if (deployDir == null)
             {
-                environment.AddToErrorList("Error evaluating attributes. Execution suspended.");
+				AddErrorEvaluatingAttribute("todir");
                 return;
             }
 
