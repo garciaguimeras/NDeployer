@@ -1,28 +1,12 @@
 ﻿import filename="Resources/NBuildDep.fxml"
 
-property name="DOCUMENTS.DIR" value="/home/noel/Documents/X"
-property name="SRC.FILE" value="${DOCUMENTS.DIR}/test.zip"
-
-function name="unzip"
+function name="author"
 {
-	unzip filename="${SRC.FILE}"
-	{
-		print text="Unzipping file"
-		copy todir="${DOCUMENTS.DIR}"
-	}
+	print text="Redefining the function!"
 }
 
-function name="author" {}
+print text="${hello}"
 
-ifdef name="author" type="function"
-{
-	print text="defined"
-}
-ifndef name="author" type="function"
-{
-	print text="not defined"
-}
-
-invoke name="unzip"
+invoke name="author"
 
 print text="Done!"

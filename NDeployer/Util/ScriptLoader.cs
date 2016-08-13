@@ -12,7 +12,7 @@ namespace NDeployer.Util
 
 		public static void Load(string filename)
 		{
-			Load(filename, true, new string[] { });
+			Load(filename, false, new string[] { });
 		}
 
 		public static void Load(string filename, bool executeScript, params string[] argList)
@@ -47,7 +47,7 @@ namespace NDeployer.Util
 			if (executeScript)
 				rootTask.Execute();
 			else
-				rootTask.LoadMetaAttributes();
+				rootTask.Load();
 		}
 
 	}

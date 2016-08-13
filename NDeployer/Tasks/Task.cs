@@ -65,40 +65,34 @@ namespace NDeployer.Tasks
 		public ContextTask(TaskDef rootNode) : base(rootNode)
 		{}
 
-		public void LoadImports(IEnumerable<TaskDef> children)
+		private void LoadElement(IEnumerable<TaskDef> children, string name)
 		{
-			foreach (TaskDef element in children.Where(t => t.Name.Equals("import")))
+			foreach (TaskDef element in children.Where(t => t.Name.Equals(name)))
 			{
 				Task t = TaskFactory.CreateTask(element);
-				if (!t.IsValidTaskDef())
-					environment.AddToErrorList("Could not import dependency. Execution suspended.");
-				else
+				if (t.IsValidTaskDef())
 					t.Execute();
 			}
+		}
+
+		public void LoadImports(IEnumerable<TaskDef> children)
+		{
+			LoadElement(children, "import");
+		}
+
+		public void LoadFunctions(IEnumerable<TaskDef> children)
+		{
+			LoadElement(children, "function");
 		}
 
 		public void LoadMetaAttributes(IEnumerable<TaskDef> children)
 		{
-			foreach (TaskDef element in children.Where(t => t.Name.Equals("meta-attr")))
-			{
-				Task t = TaskFactory.CreateTask(element);
-				if (!t.IsValidTaskDef())
-					environment.AddToErrorList("Meta attribute incorrectly defined. Must use attributes 'name' and 'value', or at least 'name'. Execution suspended.");
-				else
-					t.Execute();
-			}
+			LoadElement(children, "meta-attr");
 		}
 
 		public void LoadProperties(IEnumerable<TaskDef> children)
 		{
-			foreach (TaskDef element in children.Where(t => t.Name.Equals("property")))
-			{
-				Task t = TaskFactory.CreateTask(element);
-				if (!t.IsValidTaskDef())
-					environment.AddToErrorList("Property incorrectly defined. Must use attributes 'name' and 'value', or else 'filename'. Execution suspended.");
-				else
-					t.Execute();
-			}
+			LoadElement(children, "property");
 		}
 
 		protected void ExecuteContext(IEnumerable<TaskDef> children)
@@ -106,7 +100,10 @@ namespace NDeployer.Tasks
 			if (environment.Errors.Count() > 0)
 				return;
 
-			IEnumerable<TaskDef> elements = children.Where(t => !t.Name.Equals("property") && !t.Name.Equals("meta-attr") && !t.Name.Equals("import"));
+			IEnumerable<TaskDef> elements = children.Where(t => !t.Name.Equals("property") && 
+				                                                !t.Name.Equals("meta-attr") && 
+				                                                !t.Name.Equals("import") &&
+				                                               !t.Name.Equals("function"));
 			foreach (TaskDef child in elements)
 			{
 				string name = child.Name;
@@ -114,13 +111,11 @@ namespace NDeployer.Tasks
 				if (t == null)
 				{
 					environment.AddToErrorList("Could not find any task for tag: {0}", name);
-					continue;
+					return;
 				}
 
 				if (t.IsValidTaskDef())
-				{
 					t.Execute();
-				}
 
 				if (environment.Errors.Count() > 0)
 					return;
@@ -131,9 +126,9 @@ namespace NDeployer.Tasks
 
 	enum ContextStrategy
 	{
-		NEW,
-		KEEP,
-		CLONE
+		NEW_PIPE,
+		KEEP_PIPE,
+		CLONE_PIPE	
 	}
 
 	abstract class GeneratorTask : ContextTask
@@ -145,21 +140,21 @@ namespace NDeployer.Tasks
 
 		public GeneratorTask(TaskDef rootNode) : base(rootNode)
 		{
-			ContextStrategy = ContextStrategy.NEW;
+			ContextStrategy = ContextStrategy.NEW_PIPE;
 		}
 
 		public override void Execute()
 		{
-			// ContextStrategy.NEW
+			// ContextStrategy.NEW_PIPE
 			Pipe p = new Pipe();
 
 			switch (ContextStrategy)
 			{
-				case ContextStrategy.KEEP:
+				case ContextStrategy.KEEP_PIPE:
 					p = environment.Pipe;
 					break;
 			    
-				case ContextStrategy.CLONE:
+				case ContextStrategy.CLONE_PIPE:
 					p = environment.Pipe.Clone();
 					break;
 			}

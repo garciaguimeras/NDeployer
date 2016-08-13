@@ -23,7 +23,7 @@ namespace NDeployer.Tasks
 
 		public BasicIfTask(TaskDef taskDef) : base(taskDef)
 		{
-			ContextStrategy = ContextStrategy.KEEP;
+			ContextStrategy = ContextStrategy.KEEP_PIPE;
 
 			name = null;
 			type = IfDefType.none;

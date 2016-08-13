@@ -18,16 +18,11 @@ namespace NDeployer.Tasks
 		public RootTask(TaskDef rootNode, string[] args) : base(rootNode)
 		{
 			this.args = args;
-			ContextStrategy = ContextStrategy.KEEP;
+			ContextStrategy = ContextStrategy.KEEP_PIPE;
 		}
 
 		public override bool IsValidTaskDef()
 		{
-			if (RootNode == null)
-			{
-				environment.AddToErrorList("Invalid build file. Can't find document root");
-				return false;
-			}
 			return true;
 		}
 
@@ -41,9 +36,12 @@ namespace NDeployer.Tasks
 			}
 		}
 
-		public void LoadMetaAttributes()
+		public void Load()
 		{
 			LoadMetaAttributes(RootNode.Children);
+			LoadImports(RootNode.Children);
+			LoadProperties(RootNode.Children);
+			LoadFunctions(RootNode.Children);
 		}
 
 		public override void ExecuteGenerator()
@@ -52,6 +50,7 @@ namespace NDeployer.Tasks
 			LoadImports(RootNode.Children);
 			LoadArguments();
 			LoadProperties(RootNode.Children);
+			LoadFunctions(RootNode.Children);
 			ExecuteContext(RootNode.Children);
 		}
 

@@ -41,8 +41,6 @@ namespace NDeployer.Tasks
 			string scriptPath = Path.Combine(System.Environment.CurrentDirectory, filename);
 
 			ScriptLoader.Load(scriptPath);
-			if (environment.Errors.Count() > 0)
-				environment.PrintErrorList();
 		}
 	}
 }

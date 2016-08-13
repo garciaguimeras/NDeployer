@@ -139,6 +139,8 @@ namespace NDeployer.Util
             {
                 PropertyItem item = EvalPropertyItem(new PropertyItem { Name = "", Value = value, EvalValue = null }, new Stack<string>());
                 // Logger.info("Value {0}", item.EvalValue);
+				if (item == null)
+					return null;
                 return item.EvalValue;
             }
             catch (PropertyEvaluatorException e)

@@ -1,2 +1,6 @@
-﻿print text="Dependency loaded"
-print text="Dependency loaded 2"
+﻿$hello Hello World!
+
+function name="author" 
+{
+	print text="Author of this script is..."
+}

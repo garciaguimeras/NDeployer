@@ -13,7 +13,7 @@ namespace NDeployer.Tasks
 
 		public WithTask(TaskDef taskDef) : base(taskDef)
 		{
-			ContextStrategy = ContextStrategy.CLONE;
+			ContextStrategy = ContextStrategy.CLONE_PIPE;
 		}
 
 		public override bool IsValidTaskDef()
