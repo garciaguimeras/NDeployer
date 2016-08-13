@@ -1,4 +1,4 @@
-﻿property name="DOCUMENTS.DIR" value="/home/noel/Documents"
+﻿property name="DOCUMENTS.DIR" value="/home/noel/Documents/X"
 property name="SRC.FILE" value="${DOCUMENTS.DIR}/test.zip"
 
 print text="Zipping in flatten mode"
@@ -9,7 +9,7 @@ function name="unzip"
 	unzip filename="${SRC.FILE}"
 	{
 		print text="Unzipping file"
-		copy todir="${DOCUMENTS.DIR}" basedir="Downloads"
+		copy todir="${DOCUMENTS.DIR}"
 	}
 }
 

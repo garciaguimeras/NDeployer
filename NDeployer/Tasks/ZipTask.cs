@@ -88,7 +88,10 @@ namespace NDeployer.Tasks
 			IEnumerable<Dictionary<string, string>> input = environment.Pipe.FilterStandardPipe("exclude");
 			foreach (Dictionary<string, string> data in input)
             {
-				if (!data.ContainsKey("filename") || !File.Exists(data["filename"])) 
+				if (!data.ContainsKey("filename"))
+					continue;
+				
+				if (!File.Exists(data["filename"])) 
 				{
 					string name = data.ContainsKey("filename") ? data["filename"] : "";
 					environment.AddToErrorList("Filename does not exist: {0}", name);

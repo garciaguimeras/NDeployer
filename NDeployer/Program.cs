@@ -3,8 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-using NDeployer.Script;
-using NDeployer.Tasks;
+using NDeployer.Util;
 
 namespace NDeployer
 {
@@ -88,44 +87,16 @@ namespace NDeployer
 		{
 			Environment environment = Environment.GetEnvironment();
 
-			if (!File.Exists(filename))
-			{
-				Console.WriteLine("Error: File not found {0}", filename);
-				return;
-			}
-			ScriptFile scriptFile = ScriptFactory.GetScriptForFilename(filename);
-			if (scriptFile == null)
-			{
-				Console.WriteLine("Error: Invalid file type or extension {0}", filename);
-				return;
-			}
+			ScriptLoader.Load(filename, flag == ProgramFlag.EXECUTE, argList);
 
-			TaskDef rootTaskDef = scriptFile.Parse(filename);
-			if (rootTaskDef == null)
-			{
-				Console.WriteLine("Error: Could not parse file {0}", filename);
-				return;
-			}
-
-			RootTask rootTask = new RootTask(rootTaskDef, argList);
-			rootTask.IsValidTaskDef();
 			if (environment.Errors.Count() > 0)
 			{
 				environment.PrintErrorList();
 				return;
 			}
-				
+
 			if (flag == ProgramFlag.INFO)
-			{
-				rootTask.LoadMetaAttributes(rootTaskDef.Children);
 				PrintMetaAttributes();
-				return;
-			}
-
-			rootTask.LoadArguments();
-			rootTask.Execute();
-			if (environment.Errors.Count() > 0)
-				environment.PrintErrorList();
 		}
 
 		private void CheckOptions(string[] args, ProgramInfo programInfo)

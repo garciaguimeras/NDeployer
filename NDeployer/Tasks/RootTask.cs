@@ -18,6 +18,7 @@ namespace NDeployer.Tasks
 		public RootTask(TaskDef rootNode, string[] args) : base(rootNode)
 		{
 			this.args = args;
+			ContextStrategy = ContextStrategy.KEEP;
 		}
 
 		public override bool IsValidTaskDef()
@@ -40,11 +41,16 @@ namespace NDeployer.Tasks
 			}
 		}
 
+		public void LoadMetaAttributes()
+		{
+			LoadMetaAttributes(RootNode.Children);
+		}
+
 		public override void ExecuteGenerator()
 		{
 			LoadMetaAttributes(RootNode.Children);
-			LoadProperties(RootNode.Children);
 			LoadArguments();
+			LoadProperties(RootNode.Children);
 			ExecuteContext(RootNode.Children);
 		}
 
