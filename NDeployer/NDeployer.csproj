@@ -99,8 +99,15 @@
     <Compile Include="Tasks\IfDefTask.cs" />
     <Compile Include="Util\ScriptLoader.cs" />
     <Compile Include="Tasks\ImportTask.cs" />
-    <Compile Include="Lang\FunctionInfo.cs" />
-    <Compile Include="Lang\ModuleInfo.cs" />
+    <Compile Include="FunctionInfo.cs" />
+    <Compile Include="ModuleInfo.cs" />
+    <Compile Include="Lang\Property.cs" />
+    <Compile Include="Lang\MetaAttribute.cs" />
+    <Compile Include="Lang\Context.cs" />
+    <Compile Include="Lang\Function.cs" />
+    <Compile Include="Lang\Task.cs" />
+    <Compile Include="Lang\Module.cs" />
+    <Compile Include="Lang\LangError.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

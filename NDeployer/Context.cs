@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 
 using NDeployer.Script;
-using NDeployer.Lang;
 
 namespace NDeployer
 {
@@ -91,7 +90,7 @@ namespace NDeployer
 		{
 			if (!functions.ContainsKey(name))
 				return;
-			functions[name].AddTaskDefs(tasks);
+			functions[name].AddTasks(tasks);
 		}
 
 		public FunctionInfo GetFunction(string name)

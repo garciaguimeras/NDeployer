@@ -7,8 +7,6 @@ using System.IO;
 
 using FlatXml.FXml;
 
-using NDeployer.Lang;
-
 namespace NDeployer.Script
 {
 	class FXmlFile : ScriptFile

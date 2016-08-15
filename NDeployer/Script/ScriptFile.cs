@@ -1,6 +1,4 @@
-﻿using NDeployer.Lang;
-
-namespace NDeployer.Script
+﻿namespace NDeployer.Script
 {
 	abstract class ScriptFile
 	{

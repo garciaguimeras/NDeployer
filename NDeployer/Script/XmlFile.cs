@@ -5,8 +5,6 @@ using System.Text;
 using System.Xml.Linq;
 using System.IO;
 
-using NDeployer.Lang;
-
 namespace NDeployer.Script
 {
 	class XmlFile : ScriptFile

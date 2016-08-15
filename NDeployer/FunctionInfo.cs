@@ -2,7 +2,7 @@
 
 using NDeployer.Script;
 
-namespace NDeployer.Lang
+namespace NDeployer
 {
 
 	class FunctionInfo
@@ -27,7 +27,7 @@ namespace NDeployer.Lang
 			parameters.Add(paramName, new PropertyItem { Name = paramName, Value = "", EvalValue = null });
 		}
 
-		public void AddTaskDefs(IEnumerable<TaskDef> taskDefs)
+		public void AddTasks(IEnumerable<TaskDef> taskDefs)
 		{
 			tasks.AddRange(taskDefs);
 		}

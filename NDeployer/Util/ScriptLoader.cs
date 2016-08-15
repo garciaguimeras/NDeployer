@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 
-using NDeployer.Lang;
 using NDeployer.Script;
 using NDeployer.Tasks;
 
@@ -34,15 +33,13 @@ namespace NDeployer.Util
 			}
 
 			ModuleInfo module = scriptFile.Parse(filename);
-			TaskDef rootTaskDef = module.RootTask;
-
-			if (rootTaskDef == null)
+			if (module.RootTask == null)
 			{
 				environment.AddToErrorList("Could not parse file {0}", filename);
 				return;
 			}
 
-			RootTask rootTask = new RootTask(rootTaskDef, argList);
+			RootTask rootTask = new RootTask(module.RootTask, argList);
 			bool isValid = rootTask.IsValidTaskDef();
 			if (!isValid)
 				return;
